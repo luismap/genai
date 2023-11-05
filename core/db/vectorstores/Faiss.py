@@ -1,11 +1,11 @@
 
 from typing import List
 from langchain.vectorstores import FAISS
-
+from langchain.schema.document import Document
 
 class FaissLangchain:
 
-    def from_documents(docs: List[str],
+    def from_documents(docs: List[Document],
                        encoder) -> FAISS:
         """create a vector store from the passed
         documents.

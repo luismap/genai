@@ -59,7 +59,7 @@ class Llama2DataSource(ChatBotDataSource):
         return cbrm
     
     def chat(self, question: str) -> ChatBotReadModel:
-        answer = self._chat_chain(input=question)
+        answer = self._chat_chain.predict(input=question)
         cbrm =  ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
                                 answer=answer,

@@ -94,6 +94,19 @@ class Llama2Hugginface:
         device_map='cuda:0', #TODO check for custom device map
         use_auth_token=self.settings.hf_token)
         return model
+    
+    def model(self):
+        """returns llama2 model, with the current model_id of this class
+        Returns:
+            _type_: _description_
+        """
+        model = AutoModelForCausalLM.from_pretrained(
+        self.model_id,
+        trust_remote_code=True,
+        config=self.model_config(),
+        device_map='cuda:0', #TODO check for custom device map
+        use_auth_token=self.settings.hf_token)
+        return model
 
     def pipeline_from_pretrained_model(self,
                             model: PreTrainedModel,

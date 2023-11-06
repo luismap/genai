@@ -4,6 +4,8 @@ from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSo
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
 
 class Llama2DataSource(ChatBotDataSource):
 
@@ -22,6 +24,10 @@ class Llama2DataSource(ChatBotDataSource):
         self._l2hf = l2hf
         self._llm_model = llm_model
         self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline)
+        self._chat_chain = ConversationChain(llm=self._langchain_hf_pipeline,
+                               verbose=False,
+                               memory=ConversationBufferMemory()
+                              )
         return None
     
     def generate_base_answer(self,
@@ -50,4 +56,12 @@ class Llama2DataSource(ChatBotDataSource):
                                 model_use=self._l2hf.model_id,
                                 answer=answer,
                                 chat_history=history)
+        return cbrm
+    
+    def chat(self, question: str) -> ChatBotReadModel:
+        answer = self._chat_chain(input=question)
+        cbrm =  ChatBotReadModel(question=question,
+                                model_use=self._l2hf.model_id,
+                                answer=answer,
+                                )
         return cbrm

@@ -102,6 +102,19 @@ class Llama2Hugginface:
                             max_new_tokens: int = 512,
                             repetition_penalty: float = 1.1
                             ):
+        """given a custom pretrained model, create a huggingface
+        pipeline.
+
+        Args:
+            model (PreTrainedModel): the model to be added to the pipeline
+            task (str, optional): task. Defaults to "text-generation".
+            temperature (float, optional): temperature. Defaults to 0.1.
+            max_new_tokens (int, optional): max tokens. Defaults to 512.
+            repetition_penalty (float, optional): repetition penalty. Defaults to 1.1.
+
+        Returns:
+            pipeline: huggingface pipeline
+        """
         pline =  pipeline(model=model, 
                             tokenizer=self.tokenizer(),
                             return_full_text=True,  # langchain expects the full text
@@ -116,7 +129,9 @@ class Llama2Hugginface:
     def pipeline(self,
                  task: str = "text-generation"):
         """return a base huggingface pipeline
-        for the current model
+        for the current model.
+        Will get the model that is mapped as default by huggingface pipeline
+        for the current model_id
         Args:
             task (str, optional): Defaults to "text-generation".
 

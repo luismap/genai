@@ -13,8 +13,7 @@ class Llama2DataSource(ChatBotDataSource):
                  bnb_config: BitsAndBytesConfig = None
                  ) -> None:
         l2hf = Llama2Hugginface()
-        bnb_config = BitsAndBytesConfig
-
+        
         if bnb_config != None:
             llm_model = l2hf.model_quantize(bnb_config)
         else:

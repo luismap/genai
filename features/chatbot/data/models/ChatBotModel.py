@@ -1,13 +1,16 @@
 
+from pydantic import BaseModel
 from features.chatbot.domain.entity.ChatBot import ChatBot
 from datetime import datetime
 
 class ChatBotModel(ChatBot):
     date_created: datetime = datetime.now()
 
-class ChatBotReadModel(ChatBotModel):
+class ChatBotReadModel(ChatBot):
     date_read: datetime = datetime.now()
 
 
-class ChatBotResponseModel(ChatBotReadModel):
-    pass
+class ChatBotResponseModel(BaseModel):
+    answer: str
+    model_use: str
+    question: str

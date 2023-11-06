@@ -96,10 +96,12 @@ class Llama2Hugginface:
         return model
     
     def model(self):
-        """returns llama2 model, with the current model_id of this class
+        """returns llama2 model, with the current model_id of this class.
         Returns:
             _type_: _description_
         """
+        #TODO test it, we need to have at least the same amount of gpu vram as what the
+        #current model asks for
         model = AutoModelForCausalLM.from_pretrained(
         self.model_id,
         trust_remote_code=True,

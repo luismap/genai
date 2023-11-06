@@ -3,5 +3,5 @@ from pydantic import BaseModel
 
 class ChatBot(BaseModel):
     question: str
-    chat_history: List[Tuple[str,str]]
+    chat_history: List[Tuple[str,str]] = []
     model_use: str

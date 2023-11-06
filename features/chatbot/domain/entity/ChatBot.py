@@ -5,3 +5,4 @@ class ChatBot(BaseModel):
     question: str
     chat_history: List[Tuple[str,str]] = []
     model_use: str
+    answer: str

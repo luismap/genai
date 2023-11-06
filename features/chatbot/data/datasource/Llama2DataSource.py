@@ -25,10 +25,11 @@ class Llama2DataSource(ChatBotDataSource):
     
     def generate_base_answer(self,
                         question: str) -> ChatBotReadModel:
-        prompt = self._2hf.langchain_prompt()
+        prompt = self._l2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
         answer = self._hf_pipeline(question_formatted)
         answer_top_1 = answer[0]["generated_text"] #can be tweaked for more answers
+        
         cbrm = ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
                                 answer=answer_top_1)

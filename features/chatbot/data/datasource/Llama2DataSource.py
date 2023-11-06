@@ -1,11 +1,12 @@
 
-from core.llm.models.llama2.Llama2Huggingface import Llama2Hugginface
+from core.llm.models.llama2.Llama2Huggingface import Llama2Hugginface, Llama2Prompt
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain import PromptTemplate
 
 class Llama2DataSource(ChatBotDataSource):
 
@@ -23,9 +24,13 @@ class Llama2DataSource(ChatBotDataSource):
         self._l2hf = l2hf
         self._llm_model = llm_model
         self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline)
+
+        chatchain_prompt = PromptTemplate.from_template(Llama2Prompt.chatchain_prompt_template)
+
         self._chat_chain = ConversationChain(llm=self._langchain_hf_pipeline,
+                               prompt=chatchain_prompt,     
                                verbose=False,
-                               memory=ConversationBufferMemory()
+                               memory=ConversationBufferMemory(ai_prefix="AI Agent:")
                               )
         return None
     

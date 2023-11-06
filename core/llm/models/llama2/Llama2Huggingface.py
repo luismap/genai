@@ -15,6 +15,17 @@ your are a good and helpful assistant. Help me with my questions. If you do not 
 {user_message} [/INST]
 """
 
+    chatchain_prompt_template = """<s>[INST] <<SYS>>
+your are a good and helpful assistant. Help me with my questions. If you do not know the answer, please do not make up the answers.
+<</SYS>>
+
+# Current conversation:
+# {history}
+# Human: {input} [/INST]
+"""
+
+
+
 class Llama2Hugginface:
     def __init__(self,
                  prompt: str = "",

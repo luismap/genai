@@ -10,7 +10,7 @@ from langchain.memory import ConversationBufferMemory
 class Llama2DataSource(ChatBotDataSource):
 
     def __init__(self,
-                 bnb_config: BitsAndBytesConfig == None
+                 bnb_config: BitsAndBytesConfig = None
                  ) -> None:
         l2hf = Llama2Hugginface()
         bnb_config = BitsAndBytesConfig

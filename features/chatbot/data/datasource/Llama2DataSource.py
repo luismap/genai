@@ -59,6 +59,16 @@ class Llama2DataSource(ChatBotDataSource):
         return cbrm
     
     def chat(self, question: str) -> ChatBotReadModel:
+        """interactive chat using langchain ConverstationChain class.
+        You will be able to pose question to the model initialized by
+        this class
+
+        Args:
+            question (str): question to ask
+
+        Returns:
+            ChatBotReadModel: response chatbot model
+        """
         answer = self._chat_chain.predict(input=question)
         cbrm =  ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,

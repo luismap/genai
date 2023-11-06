@@ -36,7 +36,7 @@ class Llama2DataSource(ChatBotDataSource):
                                 answer=answer_top_1)
         return cbrm
 
-    def chat(self,question: str,
+    def chat_rag(self,question: str,
              chat_bot_model: ChatBotReadModel) -> ChatBotReadModel:
         
         prompt = self._l2hf.langchain_prompt()

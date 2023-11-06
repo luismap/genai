@@ -19,7 +19,7 @@ class Llama2DataSource(ChatBotDataSource):
             raise Exception("full model needs to be implemented")
         
         self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model)
-        self._2hf = l2hf
+        self._l2hf = l2hf
         self._llm_model = llm_model
         return None
     
@@ -28,5 +28,9 @@ class Llama2DataSource(ChatBotDataSource):
         prompt = self._2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
         answer = self._hf_pipeline(question_formatted)
-        return answer
+        answer_top_1 = answer[0]["generated_text"] #can be tweaked for more answers
+        cbrm = ChatBotReadModel(question=question,
+                                model_use=self._l2hf.model_id,
+                                answer=answer_top_1)
+        return cbrm
 

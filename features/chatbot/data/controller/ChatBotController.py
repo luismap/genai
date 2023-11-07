@@ -9,6 +9,13 @@ from features.chatbot.domain.controller.ChatBotControllerABC import ChatBotContr
 
 
 class ChatBotController(ChatBotControllerABC):
+    """
+    chatbot controller class. I will control interactions
+    with the different datasources.
+
+    Given a list of `ChatbotDataSource` it will check for the first
+    available one, and will use it for inference
+    """
     def __init__(self,
                  datasources: List[ChatBotDataSource]
                  ) -> None:

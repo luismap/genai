@@ -8,7 +8,7 @@ from features.chatbot.data.models.ChatBotModel import ChatBotModel
 
 class ChatBotControllerABC(ABC):
     @abstractmethod
-    def ask(question:str) -> ChatBotModel:
+    def chat(question:str) -> ChatBotModel:
         """given a question, return a chatbot model
         with an answer to the question
 

@@ -34,6 +34,10 @@ class Llama2DataSource(ChatBotDataSource):
                               )
         return None
     
+    def is_available(self) -> bool:
+        #need to be tweaked for fallbacks
+        return True
+
     def generate_base_answer(self,
                         question: str) -> ChatBotReadModel:
         prompt = self._l2hf.langchain_prompt()

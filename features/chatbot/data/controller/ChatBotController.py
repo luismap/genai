@@ -4,13 +4,13 @@ import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
-from features.chatbot.data.models.ChatBotModel import ChatBotModel
+from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from features.chatbot.domain.controller.ChatBotControllerABC import ChatBotControllerABC
 
 
 class ChatBotController(ChatBotControllerABC):
     """
-    chatbot controller class. I will control interactions
+    Chatbot controller class. I will control interactions
     with the different datasources.
 
     Given a list of `ChatbotDataSource` it will check for the first
@@ -27,6 +27,6 @@ class ChatBotController(ChatBotControllerABC):
 
         return None
 
-    def chat(self, question: str) -> ChatBotModel:
+    def chat(self, question: str) -> ChatBotReadModel:
         answer = self.chat_datasource.chat(question)
         return answer

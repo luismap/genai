@@ -6,11 +6,15 @@ from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 import transformers
 import uuid
 import datetime
+import time
 import gc
 
 #create session state for rows
 if "rows" not in st.session_state:
     st.session_state["rows"] = []
+
+if "ic" not in st.session_state:
+    st.session_state.ic = None
 
 rows_collection = []
 
@@ -23,15 +27,20 @@ def initialiaze_model(mode: str):
     if mode == "8bit":
         bnb_config = BitsAndBytesConfig(transformers.BitsAndBytesConfig(
         load_in_8bit=True))
-        st.info("initializing in 8bit")
+        info = st.info("initializing in 8bit")
     elif mode == "4bit":
         bnb_config = BitsAndBytesConfig()
-        st.info("initializing model in 4 bits")
+        info = st.info("initializing model in 4 bits")
     
     llm_source = Llama2DataSource(bnb_config)
+    info.empty()
     cb_ctr = ChatBotController([llm_source])
     ic = InteractiveChat(cb_ctr)
-    return ic
+    info_m = st.info("model initialized")
+    
+    time.sleep(3)
+    info_m.empty()
+    return (ic,llm_source)
 
 def initialiaze_model_test(mode: str):
     if mode == "8bit":
@@ -39,7 +48,6 @@ def initialiaze_model_test(mode: str):
     elif mode == "4bit":
         st.info("initializing in 4bit")
     return "hi"
-
 
 def add_row(content):
     st.session_state["rows"].append(content)
@@ -53,22 +61,37 @@ def generate_row(content):
     return content
 
 #sider
-if st.sidebar.button('Initialized 8bit'):
-    ic = initialiaze_model_test("8bit")
-else:
-    st.sidebar.button('Initialized 4bit')
-    ic = initialiaze_model_test("4bit")
+init_8bit_button = st.sidebar.button('Initialized 8bit')
+init_4bit_button = st.sidebar.button('Initialized 4bit')
+get_history = st.sidebar.button('show memory')
+
+
+if init_8bit_button:
+    ic, llm = initialiaze_model("8bit")
+    st.session_state.ic = ic
+    st.session_state.llm = llm
+
+elif init_4bit_button:
+    ic, llm = initialiaze_model("4bit")
+    st.session_state.ic = ic
+    st.session_state.llm = llm
+    
+def get_memory():
+    return st.session_state.llm._chat_chain.memory
+
+if get_history:
+    add_row(get_memory())
 
 def chat(input_text):
-    #st.info("asking llm")
-    ic.ask_me_something(input_text)
-    #add_row(f"hi {datetime.datetime.now()}")
-    #st.info("the output of the llm")
+    info = st.info("asking llm")
+    add_row(st.session_state.ic.ask_me_something(input_text).answer)
+    info.empty()
+    add_row(f"################### {datetime.datetime.now()}")
+    info = st.info("response generated")
+    info.empty()
 
 #main
 col1_chat, col2_chat_rag = st.columns(2)
-
-
 
 with col1_chat.form('chat'):
     text = st.text_area('Ask me something:', 'give me a list of animals?')

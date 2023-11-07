@@ -26,11 +26,12 @@ class Llama2DataSource(ChatBotDataSource):
         self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline)
 
         chatchain_prompt = PromptTemplate.from_template(Llama2Prompt.chatchain_prompt_template)
-
+        #todo, bound memory to with user
+        self._chat_chain_memory = ConversationBufferMemory(ai_prefix="AI Agent:")
         self._chat_chain = ConversationChain(llm=self._langchain_hf_pipeline,
                                prompt=chatchain_prompt,     
                                verbose=False,
-                               memory=ConversationBufferMemory(ai_prefix="AI Agent:")
+                               memory=self._chat_chain_memory
                               )
         return None
     

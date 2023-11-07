@@ -4,9 +4,7 @@ from passlib.context import CryptContext
 
 crypt_context = CryptContext(schemes="bcrypt", deprecated="auto")
 
-class MyUtils:  
-    def __init__(self) -> None:
-        pass
+class MyUtils:
     """
     given a top level key, get corresponding configs
     """

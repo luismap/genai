@@ -4,10 +4,10 @@ from features.chatbot.domain.entity.ChatBot import ChatBot
 from datetime import datetime
 
 class ChatBotModel(ChatBot):
-    date_created: datetime = datetime.now()
+    date_created: str = str(datetime.now())
 
 class ChatBotReadModel(ChatBot):
-    date_read: datetime = datetime.now()
+    date_read: str = str(datetime.now())
 
 
 class ChatBotResponseModel(BaseModel):

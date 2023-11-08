@@ -18,5 +18,5 @@
 # This file must be moved to the project's root
 # directory for CML to detect it
 
-pip3 install -U -r requirements.txt
+pip install -U -r requirements.txt
 #Rscript -e "install.packages(repos='https://cloud.r-project.org', c('readr', 'rsample', 'parsnip', 'yardstick'))"

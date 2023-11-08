@@ -11,6 +11,17 @@ ic = InteractiveChat(cb_ctr)
 
 
 def ask_me_something(payload):
+    """
+    {
+  "question": "give me a list of 5 animals? be short in your answer"
+}
+ 
+    Args:
+        payload (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     question = payload["question"]
     answer = ic.ask_me_something(question)
-    return answer
+    return answer.dict()

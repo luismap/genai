@@ -24,8 +24,8 @@ def generate_row(content):
     return content
 
 #sider
-url = 'https://modelservice.ml-8dd01e8a-c76.ps-sandb.a465-9q4k.cloudera.site/model?accessKey=muikb82ba46jd8zjed0alp03n7xxb9hu'
-bearer = 'Bearer 0899788fed5761d8a7644dfa20af75b1fb0d9b282326bb1fd52b679e30b0ceac.f37dfd97eb29602c8b135a11bddcc7501918792548f6a1694c9d08dc518e0f1d'
+url = 'https://modelservice.ml-8dd01e8a-c76.ps-sandb.a465-9q4k.cloudera.site/model?accessKey=XXXXXXXXX'
+bearer = 'Bearer XXXXXXXXXXXXX' 
 
 def post_llm_api(question:str) -> dict:
     data = '{"request":{"question":"' + question +  '"}}'

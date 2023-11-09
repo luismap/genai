@@ -24,7 +24,7 @@ class ChatBotController(ChatBotControllerABC):
         self.app_state = self.app_props["env"]
         self.logger = logging.getLogger(self.app_props["logger"])
         self.chat_datasource: ChatBotDataSource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
-        self.vector_db: VectorDbSource = self.chat_datasource._vector_db
+        self._vector_db: VectorDbSource = self.chat_datasource._vector_db
 
         self.logger.info("chatbot controller initialized")
 
@@ -39,12 +39,12 @@ class ChatBotController(ChatBotControllerABC):
         return answer
 
     def load_text_from_local(self,path: str) -> bool:
-        loaded = self.vector_db.load_text_from_local(path)
+        loaded = self._vector_db.load_text_from_local(path)
         return loaded
 
     def load_from_web(self, links: List[str]) -> bool:
-        web_loaded = self.vector_db.load_from_web(links)
+        web_loaded = self._vector_db.load_from_web(links)
         return web_loaded
 
     def clean_context(self) -> bool:
-        self.vector_db.clean_db()
+        self._vector_db.clean_db()

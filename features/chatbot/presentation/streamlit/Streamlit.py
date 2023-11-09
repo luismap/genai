@@ -1,7 +1,9 @@
 import streamlit as st
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from features.chatbot.data.controller.ChatBotController import ChatBotController
+from features.chatbot.data.datasource.FaissLangchainVectorDbSource import FaissLangchainVectorDbSource
 from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
+from features.chatbot.data.models.ChatBotModel import ChatBotResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 import transformers
 import uuid
@@ -13,34 +15,65 @@ import gc
 if "rows" not in st.session_state:
     st.session_state["rows"] = []
 
+if "rows_rag" not in st.session_state:
+    st.session_state["rows_rag"] = []
+
 if "ic" not in st.session_state:
-    st.session_state.ic = None
+    st.session_state.ic: InteractiveChat = None
 
-rows_collection = []
+if "llm" not in st.session_state:
+    st.session_state.llm = None
 
+rows_collection_chat = []
+rows_collection_chat_rag = []
+
+#page configs
 st.set_page_config(layout="wide")
-st.title('📱Chatbot')
+st.title('📱Gen - AI © PS labs')
 
+#initialized widgets
+qa_chat, qa_rag, vector_tab, audio_tab = st.tabs(["📝 QA", "🎓 QA RAG" , "🧮 vectors", "🔈 audio"])
+col1_chat = qa_chat.columns(1)[0]
+col2_chat_rag = qa_rag.columns(1)[0]
+
+#fucntional scripts
 def initialiaze_model(mode: str):
-    ic = None #making none to clean from Gpu
+    st.session_state.ic = None #making none to clean from Gpu
     gc.collect()
+
     if mode == "8bit":
+        infos = [ i.info("initializing in 8 bit") for i in [qa_rag,qa_chat]]
+        #info = qa_chat.info("initializing in 8bit")
         bnb_config = BitsAndBytesConfig(transformers.BitsAndBytesConfig(
         load_in_8bit=True))
-        info = st.info("initializing in 8bit")
+        for i in infos:
+            i.empty()
+
     elif mode == "4bit":
+        infos = [ i.info("initializing in 4 bit") for i in [qa_rag,qa_chat]]
         bnb_config = BitsAndBytesConfig()
-        info = st.info("initializing model in 4 bits")
-    
-    llm_source = Llama2DataSource(bnb_config)
-    info.empty()
+        for i in infos:
+            i.empty()
+
+    infos = [ i.info("initializing vector store") for i in [qa_rag,qa_chat]]
+    vector_db = FaissLangchainVectorDbSource()
+    for i in infos:
+            i.empty()
+
+    infos = [ i.info("initializing llm") for i in [qa_rag,qa_chat]]
+    llm_source = Llama2DataSource(vector_db,bnb_config)
+    for i in infos:
+            i.empty()
+
     cb_ctr = ChatBotController([llm_source])
     ic = InteractiveChat(cb_ctr)
-    info_m = st.info("model initialized")
-    
+
+    infos = [ i.info("model initialized") for i in [qa_rag,qa_chat]]
     time.sleep(3)
-    info_m.empty()
-    return (ic,llm_source)
+    for i in infos:
+            i.empty()
+
+    return (ic, llm_source)
 
 def initialiaze_model_test(mode: str):
     if mode == "8bit":
@@ -49,17 +82,43 @@ def initialiaze_model_test(mode: str):
         st.info("initializing in 4bit")
     return "hi"
 
-def add_row(content):
-    st.session_state["rows"].append(content)
+def add_row(content,key):
+    st.session_state[key].append(content)
 
-def remove_row(content):
-    st.session_state["rows"].remove(content)
+def remove_row(content,key):
+    st.session_state[key].remove(content)
 
-def generate_row(content):
-    with chat_content:
-        chat_content.write(content)
+def generate_row_chat(content, widget):
+    with widget:
+        widget.write(content)
     return content
 
+
+def chat(input_text):
+    with st.spinner("asking llm"):
+        data: ChatBotResponseModel = st.session_state.ic.ask_me_something(input_text)
+
+    model_use = data.model_use
+    add_row(data.answer,"rows")
+    add_row(f"{datetime.datetime.now()} - llm model: {model_use}", "rows")
+    
+    info = st.info("response generated")
+    time.sleep(1)
+    info.empty()
+
+def chat_rag(input_text):
+    with st.spinner("asking llm"):
+        data: ChatBotResponseModel = st.session_state.ic.ask_with_rag(input_text)
+
+    model_use = data.model_use
+    add_row(data.answer,"rows_rag")
+    add_row(f"{datetime.datetime.now()} - llm model: {model_use}", "rows_rag")
+
+    info = st.info("response generated")
+    time.sleep(1)
+    info.empty()
+
+#main
 #sider
 init_8bit_button = st.sidebar.button('Initialized 8bit')
 init_4bit_button = st.sidebar.button('Initialized 4bit')
@@ -75,38 +134,37 @@ elif init_4bit_button:
     ic, llm = initialiaze_model("4bit")
     st.session_state.ic = ic
     st.session_state.llm = llm
-    
+
 def get_memory():
     return st.session_state.llm._chat_chain.memory
 
 if get_history:
-    add_row(get_memory())
+    add_row(get_memory(),"rows")
 
-def chat(input_text):
-    info = st.info("asking llm")
-    add_row(st.session_state.ic.ask_me_something(input_text).answer)
-    info.empty()
-    add_row(f"################### {datetime.datetime.now()}")
-    info = st.info("response generated")
-    info.empty()
 
-#main
-col1_chat, col2_chat_rag = st.columns(2)
 
+#qa tab section
 with col1_chat.form('chat'):
-    text = st.text_area('Ask me something:', 'give me a list of animals?')
-    submitted = st.form_submit_button('Submit')
-    if submitted:
-        chat(text)
+        text = st.text_area('Ask me something:', 'give me a list of animals?')
+        submitted = st.form_submit_button('Submit')
+        if submitted:
+            chat(text)
 
 with col2_chat_rag.form('chat_rag'):
-    text = st.text_area('Ask me something:', 'What are the three key pieces of advice for learning how to code?')
-    submitted = st.form_submit_button('Submit')
-    if submitted:
-        chat(text)
+        text = st.text_area('RAG - Ask me something:', 'What is cloudera cml')
+        submitted = st.form_submit_button('Submit')
+        if submitted:
+            chat_rag(text)
 
-chat_content, chat_rag_content = st.columns(2)
+chat_content = qa_chat.columns(1)[0]
+chat_rag_content = qa_rag.columns(1)[0]
 
 for data in st.session_state["rows"][::-1]:
-    row_data = generate_row(data)
-    rows_collection.append(row_data)
+    row_data = generate_row_chat(data, chat_content)
+    rows_collection_chat.append(row_data)
+
+for data in st.session_state["rows_rag"][::-1]:
+    row_data = generate_row_chat(data, chat_rag_content)
+    rows_collection_chat_rag.append(row_data)
+
+#vectors section

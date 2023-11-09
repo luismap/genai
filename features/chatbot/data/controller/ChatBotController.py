@@ -20,10 +20,10 @@ class ChatBotController(ChatBotControllerABC):
     def __init__(self,
                  datasources: List[ChatBotDataSource]
                  ) -> None:
-        self.app_props = MyUtils.load_properties("general")["app"]
-        self.app_state = self.app_props["env"]
-        self.logger = logging.getLogger(self.app_props["logger"])
-        self.chat_datasource: ChatBotDataSource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
+        self._app_props = MyUtils.load_properties("general")["app"]
+        self._app_state = self.app_props["env"]
+        self._logger = logging.getLogger(self.app_props["logger"])
+        self._chat_datasource: ChatBotDataSource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
         self._vector_db: VectorDbSource = self.chat_datasource._vector_db
 
         self.logger.info("chatbot controller initialized")

@@ -6,6 +6,7 @@ log/*
 .ipynb_checkpoints
 *ipynb*
 .env
+*kubeconfig*
 
 #misc
 .coverage

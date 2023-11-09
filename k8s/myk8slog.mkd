@@ -1,0 +1,21 @@
+# when trying to run application, remember your infra allocation of k8s infra resources
+exmple for aws eks
+![image](image.png)
+What's MAX_POD_PER_INSTANCE?
+
+In Amazon Web Service, each instance type has a different upper limit on how many Pods it can run.
+
+For example, an m5.large instance can only run 29 Pods, but an m5.4xlarge can run up to 234.
+
+You can view the full list here.
+
+If you were to select an m5.large, the memory reserved for the kubelet and agents is:
+
+Reserved memory = 255Mi + 11MiB * 29 = 574MiB
+
+## For CPU resources, EKS copies the GKE implementation and reserves:
+
+* 6% of the first core
+* 1% of the next core (up to 2 cores)
+* 0.5% of the next 2 cores (up to 4 cores)
+* 0.25% of any cores above 4 cores

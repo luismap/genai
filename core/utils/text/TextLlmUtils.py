@@ -17,6 +17,7 @@ class TextLlmUtils:
         Returns:
             List[Document]: a list of documents
         """
+        #TODO clean newlines and trim content
         loader = TextLoader(path)
         docs = loader.load()
         return docs
@@ -30,6 +31,7 @@ class TextLlmUtils:
         Returns:
             List[Document]: a list of documents
         """
+        #TODO clean newlines and trim content
         loader = WebBaseLoader(links)
         docs = loader.load()
         return docs

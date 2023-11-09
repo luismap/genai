@@ -33,6 +33,9 @@ class Llama2DataSource(ChatBotDataSource):
                                verbose=False,
                                memory=self._chat_chain_memory
                               )
+        #for rag
+        self._chat_rag_history = []
+
         return None
     
     def is_available(self) -> bool:
@@ -51,20 +54,22 @@ class Llama2DataSource(ChatBotDataSource):
                                 answer=answer_top_1)
         return cbrm
 
-    def chat_rag(self,question: str,
-             chat_bot_model: ChatBotReadModel) -> ChatBotReadModel:
+    def chat_rag(self,
+                question: str,
+                get_history:bool = False) -> ChatBotReadModel:
         
         prompt = self._l2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
         answer = self._langchain_hf_pipeline(question_formatted)
 
-        history = chat_bot_model.chat_history
-        history.append((question,answer))
+        self._chat_rag_history.append((question,answer))
+
+        response_history = self._chat_rag_history if get_history else []
 
         cbrm = ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
                                 answer=answer,
-                                chat_history=history)
+                                chat_history=response_history)
         return cbrm
     
     def chat(self, question: str) -> ChatBotReadModel:

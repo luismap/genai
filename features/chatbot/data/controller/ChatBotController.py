@@ -35,6 +35,7 @@ class ChatBotController(ChatBotControllerABC):
         answer = self._chat_datasource.chat(question)
         return answer
 
+    #TODO add history flag
     def chat_rag(self,question: str) -> ChatBotReadModel:
         answer = self._chat_datasource.chat_rag(question)
         return answer

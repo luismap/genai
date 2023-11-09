@@ -50,7 +50,8 @@ class Llama2DataSource(ChatBotDataSource):
         self._conversational_rag_chain: ConversationalRetrievalChain = ConversationalRetrievalChain.from_llm(
               self._langchain_hf_pipeline,
               vector_db.retriever(),
-              return_source_documents=False
+              return_source_documents=False,
+              rephrase_question=False
         )
 
         return None

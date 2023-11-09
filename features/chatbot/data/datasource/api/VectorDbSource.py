@@ -3,10 +3,8 @@
 from abc import ABC, abstractmethod
 from langchain.document_loaders.text import TextLoader
 from langchain.schema.document import Document
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.schema.vectorstore import VectorStoreRetriever
 from typing import List
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.document_loaders import WebBaseLoader
 
 class VectorDbSource(ABC):
     @abstractmethod
@@ -27,4 +25,8 @@ class VectorDbSource(ABC):
     
     @abstractmethod
     def similarity_search(question: str) -> List[Document]:
+        pass
+    
+    @abstractmethod
+    def retriever():
         pass

@@ -40,6 +40,7 @@ class Llama2DataSource(ChatBotDataSource):
 
         #for rag
         self._chat_rag_history = []
+        self._vector_db = vector_db
         self._conversational_rag_chain: ConversationalRetrievalChain = ConversationalRetrievalChain.from_llm(
               self._langchain_hf_pipeline,
               vector_db.retriever(),

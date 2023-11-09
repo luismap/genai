@@ -3,6 +3,7 @@
 import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
+from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
 from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
@@ -47,4 +48,6 @@ class ChatBotController(ChatBotControllerABC):
         return web_loaded
 
     def clean_context(self) -> bool:
-        self._vector_db.clean_db()
+        if isinstance(self._chat_datasource, Llama2DataSource):
+            self._chat_datasource._chat_rag_history = []
+        return self._vector_db.clean_db()

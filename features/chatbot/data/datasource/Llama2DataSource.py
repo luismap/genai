@@ -10,6 +10,12 @@ from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 
 class Llama2DataSource(ChatBotDataSource):
+    """
+    wrapper class for interacting with `Llama2` models from `huggingface`.
+
+    Args:
+        ChatBotDataSource : abstract class which decides main interactions
+    """
 
     def __init__(self,
                  vector_db: VectorDbSource,

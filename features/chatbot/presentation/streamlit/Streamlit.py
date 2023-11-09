@@ -10,19 +10,19 @@ import uuid
 import datetime
 import time
 import gc
+import pandas as pd
 
 #create session state for rows
 if "rows" not in st.session_state:
     st.session_state["rows"] = []
-
 if "rows_rag" not in st.session_state:
     st.session_state["rows_rag"] = []
-
 if "ic" not in st.session_state:
     st.session_state.ic: InteractiveChat = None
-
 if "llm" not in st.session_state:
     st.session_state.llm = None
+if 'startup' not in st.session_state:
+    st.session_state.startup = True
 
 rows_collection_chat = []
 rows_collection_chat_rag = []
@@ -36,7 +36,7 @@ qa_chat, qa_rag, vector_tab, audio_tab = st.tabs(["📝 QA", "🎓 QA RAG" , "�
 col1_chat = qa_chat.columns(1)[0]
 col2_chat_rag = qa_rag.columns(1)[0]
 
-#fucntional scripts
+#functional scripts
 def initialiaze_model(mode: str):
     st.session_state.ic = None #making none to clean from Gpu
     gc.collect()
@@ -50,6 +50,7 @@ def initialiaze_model(mode: str):
             i.empty()
 
     elif mode == "4bit":
+        st.session_state.startup = False
         infos = [ i.info("initializing in 4 bit") for i in [qa_rag,qa_chat]]
         bnb_config = BitsAndBytesConfig()
         for i in infos:
@@ -115,14 +116,40 @@ def chat_rag(input_text):
     add_row(f"{datetime.datetime.now()} - llm model: {model_use}", "rows_rag")
 
     info = st.info("response generated")
-    time.sleep(1)
+    time.sleep(2)
     info.empty()
+
+def generate_web_button(urls):
+    with st.spinner("generating content from the passed urls"):
+        st.session_state.ic.load_from_web(urls)
+    
+    info = vector_tab.info("content added")
+    #time.sleep(2)
+    info.empty()
+
+def vector_load_from_web(content: str):
+    urls = content.strip()
+    urls_parsed = urls.strip(",")
+    urls_list = urls_parsed.split(",")
+    vector_tab.warning(f"Following links parsed",icon="ℹ️")
+    data = pd.DataFrame(urls_list,columns=["url"])
+    vector_tab.dataframe(data, 
+                          column_config= {"url": st.column_config.LinkColumn(" 🔗 Links Parsed")}
+                          ,hide_index=True)
+    
+    vector_tab.button("Send", type="primary" ,on_click=generate_web_button,args=(urls_list,))
+    vector_tab.button("Cancel", type="secondary")
 
 #main
 #sider
 init_8bit_button = st.sidebar.button('Initialized 8bit')
 init_4bit_button = st.sidebar.button('Initialized 4bit')
 get_history = st.sidebar.button('show memory')
+
+if st.session_state.startup:
+    ic, llm = initialiaze_model("4bit")
+    st.session_state.ic = ic
+    st.session_state.llm = llm
 
 
 if init_8bit_button:
@@ -149,22 +176,31 @@ with col1_chat.form('chat'):
         submitted = st.form_submit_button('Submit')
         if submitted:
             chat(text)
+chat_content = qa_chat.columns(1)[0]
 
+for data in st.session_state["rows"][::-1]:
+    row_data = generate_row_chat(data, chat_content)
+    rows_collection_chat.append(row_data)
+
+#qa rag tab section
 with col2_chat_rag.form('chat_rag'):
         text = st.text_area('RAG - Ask me something:', 'What is cloudera cml')
         submitted = st.form_submit_button('Submit')
         if submitted:
             chat_rag(text)
 
-chat_content = qa_chat.columns(1)[0]
 chat_rag_content = qa_rag.columns(1)[0]
-
-for data in st.session_state["rows"][::-1]:
-    row_data = generate_row_chat(data, chat_content)
-    rows_collection_chat.append(row_data)
 
 for data in st.session_state["rows_rag"][::-1]:
     row_data = generate_row_chat(data, chat_rag_content)
     rows_collection_chat_rag.append(row_data)
 
 #vectors section
+col_url = vector_tab.columns(1)[0]
+
+with col_url.form("url-form"):
+    urls = "https://docs.cloudera.com/machine-learning/cloud/index.html,https://docs.cloudera.com/machine-learning/cloud/product/topics/ml-product-overview.html#cdsw_overview"
+    text = st.text_area('Pass a list of comma separated urls:', urls)
+    submitted = st.form_submit_button('Submit')
+    if submitted:
+        vector_load_from_web(text)

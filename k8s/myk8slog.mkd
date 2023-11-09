@@ -1,5 +1,8 @@
 # when trying to run application, remember your infra allocation of k8s infra resources
-exmple for aws eks
+
+[allocatable k8s resources](https://learnk8s.io/allocatable-resources)
+
+example for aws eks
 ![image](image.png)
 What's MAX_POD_PER_INSTANCE?
 

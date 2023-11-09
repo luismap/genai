@@ -4,6 +4,7 @@ import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
+from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from features.chatbot.domain.controller.ChatBotControllerABC import ChatBotControllerABC
 
@@ -23,6 +24,8 @@ class ChatBotController(ChatBotControllerABC):
         self.app_state = self.app_props["env"]
         self.logger = logging.getLogger(self.app_props["logger"])
         self.chat_datasource: ChatBotDataSource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
+        self.vector_db: VectorDbSource = self.chat_datasource._vector_db
+
         self.logger.info("chatbot controller initialized")
 
         return None
@@ -30,3 +33,18 @@ class ChatBotController(ChatBotControllerABC):
     def chat(self, question: str) -> ChatBotReadModel:
         answer = self.chat_datasource.chat(question)
         return answer
+
+    def chat_rag(self,question: str) -> ChatBotReadModel:
+        answer = self.chat_datasource.chat_rag(question)
+        return answer
+
+    def load_text_from_local(self,path: str) -> bool:
+        loaded = self.vector_db.load_text_from_local(path)
+        return loaded
+
+    def load_from_web(self, links: List[str]) -> bool:
+        web_loaded = self.vector_db.load_from_web(links)
+        return web_loaded
+
+    def clean_context(self) -> bool:
+        self.vector_db.clean_db()

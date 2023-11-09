@@ -2,6 +2,7 @@ import streamlit as st
 import datetime
 import requests
 import time
+import os
 
 #create session state for rows
 if "rows" not in st.session_state:
@@ -24,8 +25,8 @@ def generate_row(content):
     return content
 
 #sider
-url = 'https://modelservice.ml-8dd01e8a-c76.ps-sandb.a465-9q4k.cloudera.site/model?accessKey=XXXXXXXXX'
-bearer = 'Bearer XXXXXXXXXXXXX' 
+url = os.getenv("url")
+bearer = f'Bearer  {os.getenv("bearer")}'
 
 def post_llm_api(question:str) -> dict:
     data = '{"request":{"question":"' + question +  '"}}'
@@ -33,13 +34,13 @@ def post_llm_api(question:str) -> dict:
     return r.json()
 
 def chat(input_text):
-    info = st.info("asking llm")
-    data = post_llm_api(input_text)
-    model_use = data["response"]["model_use"]
+    with st.spinner("asking llm"):
+        data = post_llm_api(input_text)
 
+    model_use = data["response"]["model_use"]
     add_row(data["response"]["answer"])
-    info.empty()
     add_row(f"{datetime.datetime.now()} - llm model: {model_use}")
+    
     info = st.info("response generated")
     time.sleep(1)
     info.empty()

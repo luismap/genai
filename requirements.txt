@@ -17,7 +17,7 @@ lint
 passlib
 python-jose[cryptography]
 #genai
-streamlit
+streamlit==1.28.1
 langchain
 chromadb==0.3.29
 transformers

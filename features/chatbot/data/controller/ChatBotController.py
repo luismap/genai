@@ -22,21 +22,21 @@ class ChatBotController(ChatBotControllerABC):
                  datasources: List[ChatBotDataSource]
                  ) -> None:
         self._app_props = MyUtils.load_properties("general")["app"]
-        self._app_state = self.app_props["env"]
-        self._logger = logging.getLogger(self.app_props["logger"])
+        self._app_state = self._app_props["env"]
+        self._logger = logging.getLogger(self._app_props["logger"])
         self._chat_datasource: ChatBotDataSource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
-        self._vector_db: VectorDbSource = self.chat_datasource._vector_db
+        self._vector_db: VectorDbSource = self._chat_datasource._vector_db
 
-        self.logger.info("chatbot controller initialized")
+        self._logger.info("chatbot controller initialized")
 
         return None
 
     def chat(self, question: str) -> ChatBotReadModel:
-        answer = self.chat_datasource.chat(question)
+        answer = self._chat_datasource.chat(question)
         return answer
 
     def chat_rag(self,question: str) -> ChatBotReadModel:
-        answer = self.chat_datasource.chat_rag(question)
+        answer = self._chat_datasource.chat_rag(question)
         return answer
 
     def load_text_from_local(self,path: str) -> bool:

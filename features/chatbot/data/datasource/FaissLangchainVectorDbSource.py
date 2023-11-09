@@ -38,4 +38,4 @@ class FaissLangchainVectorDbSource(VectorDbSource):
         return search
 
     def retriever(self):
-        return self._vector_db.as_retriever
+        return self._vector_db.as_retriever()

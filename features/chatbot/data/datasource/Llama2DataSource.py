@@ -73,13 +73,13 @@ class Llama2DataSource(ChatBotDataSource):
                        "chat_history": self._chat_rag_history}
         answer = self._conversational_rag_chain(retrieval_qa_format)
 
-        self._chat_rag_history.append((question,answer))
+        self._chat_rag_history.append((question,answer["answer"]))
 
         response_history = self._chat_rag_history if get_history else []
 
         cbrm = ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
-                                answer=answer,
+                                answer=answer["answer"],
                                 chat_history=response_history)
         return cbrm
     

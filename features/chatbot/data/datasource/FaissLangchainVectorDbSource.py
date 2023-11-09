@@ -36,3 +36,6 @@ class FaissLangchainVectorDbSource(VectorDbSource):
     def similarity_search(self, question: str) -> List[Document]:
         search = self._vector_db.similarity_search(question)
         return search
+
+    def retriever(self):
+        return self._vector_db.as_retriever

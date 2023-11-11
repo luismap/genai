@@ -102,7 +102,7 @@ class Llama2Hugginface:
         trust_remote_code=True,
         config=self.model_config(),
         quantization_config=bitandsbitesconfig.get_configs(),
-        device_map='cuda:0', #TODO check for custom device map
+        device_map='auto', #TODO check for custom device map
         use_auth_token=self.settings.hf_token)
         return model
     
@@ -117,7 +117,7 @@ class Llama2Hugginface:
         self.model_id,
         trust_remote_code=True,
         config=self.model_config(),
-        device_map='cuda:0', #TODO check for custom device map
+        device_map='auto', #TODO check for custom device map
         use_auth_token=self.settings.hf_token)
         return model
 
@@ -168,5 +168,5 @@ class Llama2Hugginface:
         task,
         model=self.model_id,
         torch_dtype=float16,
-        device_map='cuda:0') #TODO check for custom device map
+        device_map='auto') #TODO check for custom device map
         return huggingface_pipeline

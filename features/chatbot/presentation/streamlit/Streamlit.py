@@ -32,7 +32,7 @@ st.set_page_config(layout="wide")
 st.title('📱Gen - AI © PS labs')
 
 #initialized widgets
-qa_chat, qa_rag, vector_tab, audio_tab = st.tabs(["📝 QA", "🎓 QA RAG" , "🧮 vectors", "🔈 audio"])
+qa_chat, qa_rag, vector_tab, audio_tab = st.tabs(["📝 QA", "🎓 QA rag" , "🧮 vectors", "🔈 audio"])
 col1_chat = qa_chat.columns(1)[0]
 col2_chat_rag = qa_rag.columns(1)[0]
 
@@ -196,7 +196,8 @@ for data in st.session_state["rows_rag"][::-1]:
     rows_collection_chat_rag.append(row_data)
 
 #vectors section
-col_url = vector_tab.columns(1)[0]
+col_url, col_upload = vector_tab.columns(2) 
+
 
 with col_url.form("url-form"):
     urls = "https://docs.cloudera.com/machine-learning/cloud/index.html,https://docs.cloudera.com/machine-learning/cloud/product/topics/ml-product-overview.html#cdsw_overview"
@@ -204,3 +205,21 @@ with col_url.form("url-form"):
     submitted = st.form_submit_button('Submit')
     if submitted:
         vector_load_from_web(text)
+
+uploader = col_upload.file_uploader("Choose a CSV file", accept_multiple_files=True)
+
+for uploaded_file in uploader:
+    filename = uploaded_file.name
+    bytes_data = uploaded_file.read()
+    
+
+#css
+css = '''
+<style>
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+    font-size:1rem;
+    }
+</style>
+'''
+
+st.markdown(css, unsafe_allow_html=True)

@@ -5,11 +5,11 @@ from features.chatbot.data.datasource.FaissLangchainVectorDbSource import FaissL
 from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
 from features.chatbot.data.models.ChatBotModel import ChatBotResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
+import gc
+import torch
 import transformers
-import uuid
 import datetime
 import time
-import gc
 import pandas as pd
 
 #create session state for rows
@@ -21,6 +21,8 @@ if "ic" not in st.session_state:
     st.session_state.ic: InteractiveChat = None
 if "llm" not in st.session_state:
     st.session_state.llm = None
+if "cb_ctr" not in st.session_state:
+    st.session_state.cb_ctr = None
 if 'startup' not in st.session_state:
     st.session_state.startup = True
 
@@ -38,10 +40,17 @@ col2_chat_rag = qa_rag.columns(1)[0]
 
 #functional scripts
 def initialiaze_model(mode: str):
-    st.session_state.ic = None #making none to clean from Gpu
-    gc.collect()
+    if st.session_state.llm is not None:
+        del st.session_state.ic
+        del st.session_state.cb_ctr
+        del st.session_state.llm
+
+        gc.collect()
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
 
     if mode == "8bit":
+        st.session_state.startup = False
         infos = [ i.info("initializing in 8 bit") for i in [qa_rag,qa_chat]]
         #info = qa_chat.info("initializing in 8bit")
         bnb_config = BitsAndBytesConfig(transformers.BitsAndBytesConfig(
@@ -74,7 +83,7 @@ def initialiaze_model(mode: str):
     for i in infos:
             i.empty()
 
-    return (ic, llm_source)
+    return (ic, llm_source, cb_ctr)
 
 def initialiaze_model_test(mode: str):
     if mode == "8bit":
@@ -147,20 +156,24 @@ init_4bit_button = st.sidebar.button('Initialized 4bit')
 get_history = st.sidebar.button('show memory')
 
 if st.session_state.startup:
-    ic, llm = initialiaze_model("4bit")
+    ic, llm, cb_ctr = initialiaze_model("4bit")
     st.session_state.ic = ic
     st.session_state.llm = llm
+    st.session_state.cb_ctr = cb_ctr
+
 
 
 if init_8bit_button:
-    ic, llm = initialiaze_model("8bit")
+    ic, llm, cb_ctr = initialiaze_model("8bit")
     st.session_state.ic = ic
     st.session_state.llm = llm
+    st.session_state.cb_ctr = cb_ctr
 
 elif init_4bit_button:
-    ic, llm = initialiaze_model("4bit")
+    ic, llm, cb_ctr = initialiaze_model("4bit")
     st.session_state.ic = ic
     st.session_state.llm = llm
+    st.session_state.cb_ctr = cb_ctr
 
 def get_memory():
     return st.session_state.llm._chat_chain.memory

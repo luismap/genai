@@ -1,14 +1,22 @@
 from langchain.document_loaders.text import TextLoader
 from langchain.schema.document import Document
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from typing import List
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.document_loaders import WebBaseLoader
-
+import re
 class TextLlmUtils:
     """Utils class for interacting with different methods needed by the llm
     to handle text data
     """
+    def clean_document(doc: Document) -> Document:
+
+        cleaned = re.sub("\n{2,}|\t+|\s{2,}"," ", doc.page_content).strip()
+        new_doc = Document(page_content=cleaned
+                           ,metadata=doc.metadata
+                           ,type=doc.type)
+        return new_doc
+
     def loader(path: str) -> List[Document]:
         """given a file path, retrieve a list of (langchain) Documents
         Args:
@@ -17,7 +25,6 @@ class TextLlmUtils:
         Returns:
             List[Document]: a list of documents
         """
-        #TODO clean newlines and trim content
         loader = TextLoader(path)
         docs = loader.load()
         return docs
@@ -34,13 +41,16 @@ class TextLlmUtils:
         #TODO clean newlines and trim content
         loader = WebBaseLoader(links)
         docs = loader.load()
-        return docs
+        cleaned_docs = [TextLlmUtils.clean_document(doc) for doc in docs]
+        return cleaned_docs
     
     def split(docs: List[Document], 
-              chunk_size = 10,
-              chunk_overlap = 0) -> List[Document]:
+              chunk_size = 250,
+              chunk_overlap = 10) -> List[Document]:
         """given a list of documents, create splits for those documents base
-        om some criteria like chunk_size and chunk_overlap
+        om some criteria like chunk_size and chunk_overlap.
+        When finding the right balance, tweak the chunksize fo find which is the
+        best for your usecase
 
         Args:
             docs (List[Document]): list of documents
@@ -50,7 +60,7 @@ class TextLlmUtils:
         Returns:
             List[Document]: a list of chunked documents
         """
-        text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         splits = text_splitter.split_documents(docs)
         return splits
     

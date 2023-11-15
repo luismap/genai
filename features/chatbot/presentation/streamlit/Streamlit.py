@@ -111,6 +111,7 @@ def chat(input_text):
     model_use = data.model_use
     add_row(data.answer,"rows")
     add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}`", "rows")
+    add_row("="*50, "rows_rag")
 
     info = st.info("response generated")
     time.sleep(1)
@@ -123,6 +124,7 @@ def chat_rag(input_text):
     model_use = data.model_use
     add_row(data.answer,"rows_rag")
     add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}`", "rows_rag")
+    add_row("="*50, "rows_rag")
 
     info = st.info("response generated")
     time.sleep(2)

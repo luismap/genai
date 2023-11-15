@@ -25,6 +25,8 @@ if "cb_ctr" not in st.session_state:
     st.session_state.cb_ctr = None
 if 'startup' not in st.session_state:
     st.session_state.startup = True
+if 'current_qbit_mode' not in st.session_state:
+    st.session_state.current_qbit_mode = ""
 
 rows_collection_chat = []
 rows_collection_chat_rag = []
@@ -51,6 +53,7 @@ def initialiaze_model(mode: str):
 
     if mode == "8bit":
         st.session_state.startup = False
+        st.session_state.current_qbit_mode = "8bit"
         infos = [ i.info("initializing in 8 bit") for i in [qa_rag,qa_chat]]
         #info = qa_chat.info("initializing in 8bit")
         bnb_config = BitsAndBytesConfig(transformers.BitsAndBytesConfig(
@@ -60,6 +63,8 @@ def initialiaze_model(mode: str):
 
     elif mode == "4bit":
         st.session_state.startup = False
+        st.session_state.current_qbit_mode = "4bit"
+
         infos = [ i.info("initializing in 4 bit") for i in [qa_rag,qa_chat]]
         bnb_config = BitsAndBytesConfig()
         for i in infos:
@@ -109,8 +114,10 @@ def chat(input_text):
         data: ChatBotResponseModel = st.session_state.ic.ask_me_something(input_text)
 
     model_use = data.model_use
+    qbm = st.session_state.current_qbit_mode
+
     add_row(data.answer,"rows")
-    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}`", "rows")
+    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
     add_row("="*50, "rows_rag")
 
     info = st.info("response generated")
@@ -122,8 +129,9 @@ def chat_rag(input_text):
         data: ChatBotResponseModel = st.session_state.ic.ask_with_rag(input_text)
 
     model_use = data.model_use
+    qbm = st.session_state.current_qbit_mode
     add_row(data.answer,"rows_rag")
-    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}`", "rows_rag")
+    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
     add_row("="*50, "rows_rag")
 
     info = st.info("response generated")

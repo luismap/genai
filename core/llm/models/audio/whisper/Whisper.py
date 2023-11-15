@@ -1,19 +1,17 @@
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, Pipeline, PreTrainedModel, pipeline
-from transformers import WhisperProcessor
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline, PreTrainedModel
+from transformers import WhisperProcessor, Pipeline
 import torch
 
 class Whisper:
     def __init__(self
                 ,model_id: str = "openai/whisper-large-v3"
                 ,task = "automatic-speech-recognition") -> None:
-        """
-        Base wrapper class to interact with whisper models from huggingface
-
+        """"
+        Interact with openai whisper models hosted on huggingface
         Args:
-            model_id (str, optional): _description_. Defaults to "openai/whisper-large-v3".
-            task (str, optional): _description_. Defaults to "automatic-speech-recognition".
+            model_id (str, optional): model id. Defaults to "openai/whisper-large-v3".
+            task (str, optional): supported task. Defaults to "automatic-speech-recognition".
         """
-        
         self._model_id = model_id
         self._model_task = task
         self._processor: WhisperProcessor = AutoProcessor.from_pretrained(self._model_id)

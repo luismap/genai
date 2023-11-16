@@ -1,10 +1,13 @@
 import streamlit as st
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from features.chatbot.data.controller.ChatBotController import ChatBotController
+from features.chatbot.data.controller.AudioController import AudioController
 from features.chatbot.data.datasource.FaissLangchainVectorDbSource import FaissLangchainVectorDbSource
 from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
+from features.chatbot.data.datasource.WhisperDataSource import WhisperDataSource
 from features.chatbot.data.models.ChatBotModel import ChatBotResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
+from features.chatbot.domain.usecase.AudioTask import AudioTask
 import gc
 import torch
 import transformers
@@ -27,6 +30,12 @@ if 'startup' not in st.session_state:
     st.session_state.startup = True
 if 'current_qbit_mode' not in st.session_state:
     st.session_state.current_qbit_mode = ""
+if "audio_task" not in st.session_state:
+    st.session_state.audio_task: AudioTask = None
+if "audio_ctr" not in st.session_state:
+    st.session_state.audio_ctr: AudioController = None
+if "whisper_ds" not in st.session_state:
+    st.session_state.whisper_ds: WhisperDataSource = None
 
 rows_collection_chat = []
 rows_collection_chat_rag = []
@@ -41,6 +50,26 @@ col1_chat = qa_chat.columns(1)[0]
 col2_chat_rag = qa_rag.columns(1)[0]
 
 #functional scripts
+def initialize_audio():
+    if st.session_state.whisper_ds is not None:
+        del st.session_state.audio_task
+        del st.session_state.audio_ctr
+        del st.session_state.whisper_ds
+
+    info = audio_tab.info("Initializing audio model")
+    whisper_ds = WhisperDataSource()
+    info.empty()
+    
+    info = audio_tab.info("Initializing audio controller")
+    audio_ctr = AudioController([whisper_ds])
+    info.empty()
+
+    info = audio_tab.info("Initializing audio task")
+    audio_task = AudioTask(audio_ctr)
+    info.empty()
+
+    return (whisper_ds, audio_ctr, audio_task)
+
 def initialiaze_model(mode: str):
     if st.session_state.llm is not None:
         del st.session_state.ic
@@ -170,6 +199,12 @@ if st.session_state.startup:
     st.session_state.ic = ic
     st.session_state.llm = llm
     st.session_state.cb_ctr = cb_ctr
+
+    wds, audio_ctr, audio_task = initialize_audio()
+
+    st.session_state.audio_task = audio_task
+    st.session_state.audio_ctr = audio_ctr
+    st.session_state.whisper_ds = wds
 
 
 

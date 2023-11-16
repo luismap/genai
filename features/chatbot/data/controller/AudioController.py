@@ -14,7 +14,7 @@ class AudioController(AudioControllerABC):
         self._app_props = MyUtils.load_properties("general")["app"]
         self._app_state = self._app_props["env"]
         self._logger = logging.getLogger(self._app_props["logger"])
-        self._audio_ds: AudioDataSource = MyUtils.first(audio_ds, lambda ads: ads.is_available == True)
+        self._audio_ds = MyUtils.first(audio_ds, lambda ads: ads.is_available == True)
         
         self._logger.info(f" audio controller initialized - {self._audio_ds._model_id}")
         return None

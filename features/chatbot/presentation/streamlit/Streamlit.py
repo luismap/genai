@@ -156,13 +156,14 @@ def generate_row_chat(content, widget):
 
 def chat(input_text):
     with st.spinner("asking llm"):
+        start_time = time.time()
         data: ChatBotResponseModel = st.session_state.ic.ask_me_something(input_text)
-
+        inference_time = time.time() - start_time
     model_use = data.model_use
     qbm = st.session_state.current_qbit_mode
 
     add_row(data.answer,"rows")
-    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
+    add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
     add_row("="*50, "rows")
 
     info = st.info("response generated")
@@ -171,12 +172,13 @@ def chat(input_text):
 
 def chat_rag(input_text):
     with st.spinner("asking llm"):
+        start_time = time.time()
         data: ChatBotResponseModel = st.session_state.ic.ask_with_rag(input_text)
-
+        inference_time = time.time() - start_time()
     model_use = data.model_use
     qbm = st.session_state.current_qbit_mode
     add_row(data.answer,"rows_rag")
-    add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
+    add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
     add_row("="*50, "rows_rag")
 
     info = st.info("response generated")

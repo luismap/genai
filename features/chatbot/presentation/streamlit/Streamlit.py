@@ -8,6 +8,7 @@ from features.chatbot.data.datasource.WhisperDataSource import WhisperDataSource
 from features.chatbot.data.models.ChatBotModel import ChatBotResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 from features.chatbot.domain.usecase.AudioTask import AudioTask
+from features.chatbot.data.models.AudioDataModel import AudioDataReadModel
 import gc
 import torch
 import transformers
@@ -21,6 +22,8 @@ if "rows" not in st.session_state:
     st.session_state["rows"] = []
 if "rows_rag" not in st.session_state:
     st.session_state["rows_rag"] = []
+if "rows_audio" not in st.session_state:
+    st.session_state["rows_audio"] = []
 if "ic" not in st.session_state:
     st.session_state.ic: InteractiveChat = None
 if "llm" not in st.session_state:
@@ -40,6 +43,7 @@ if "whisper_ds" not in st.session_state:
 
 rows_collection_chat = []
 rows_collection_chat_rag = []
+rows_collection_audio = []
 
 #page configs
 st.set_page_config(layout="wide")
@@ -195,6 +199,17 @@ def vector_load_from_file(filename: str):
     st.session_state.ic.load_text_from_local(filename)
     return None
 
+def transcribe(file: Path):
+    with st.spinner(f"transcribing file {file.name}"):
+        data: AudioDataReadModel = st.session_state.audio_task.transcribe(file.as_posix())
+    
+    add_row(data.text,"rows_audio")
+    add_row(f"`{datetime.datetime.now()}` - audio model: `{data.model}`", "rows_audio")
+    add_row("="*50, "rows_audio")
+
+def log(line: str, widget):
+    widget.write(line)
+
 ### MAIN section
 #
 #sider
@@ -312,7 +327,7 @@ for uploaded_file in audio_uploader:
     audio_files.append(trgt_path)
     with open(trgt_path, "wb") as file:
         file.write(uploaded_file.getbuffer())
-    info = audio_tab.info(f"file {filename} uploaded")
+    add_row(f"log - file {filename} uploaded", audio_tab_right)
 
 checkbox_labels = {p for p in audio_files}
 option = audio_tab_main.selectbox(
@@ -320,13 +335,19 @@ option = audio_tab_main.selectbox(
     checkbox_labels)
 
 if option != None:
-    audio_tab_main.info(f"selected: {option}")
     path = Path(option)
+    audio_tab_main.info(f"selected: {path.name}")
+
     audio_file = open(option, 'rb')
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
 
+    audio_tab_main.button("Send", type="primary" ,on_click=transcribe,args=(path,))
+    audio_tab_main.button("Cancel", type="secondary")
 
+for data in st.session_state["rows_audio"][::-1]:
+    row_data = generate_row_chat(data, audio_tab_main)
+    rows_collection_audio.append(row_data)
 
 
 ### CSS section

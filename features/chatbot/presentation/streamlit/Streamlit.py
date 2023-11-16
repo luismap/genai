@@ -24,6 +24,8 @@ if "rows_rag" not in st.session_state:
     st.session_state["rows_rag"] = []
 if "rows_audio" not in st.session_state:
     st.session_state["rows_audio"] = []
+if "rows_audio_log" not in st.session_state:
+    st.session_state["rows_audio_log"] = []
 if "ic" not in st.session_state:
     st.session_state.ic: InteractiveChat = None
 if "llm" not in st.session_state:
@@ -40,10 +42,13 @@ if "audio_ctr" not in st.session_state:
     st.session_state.audio_ctr: AudioController = None
 if "whisper_ds" not in st.session_state:
     st.session_state.whisper_ds: WhisperDataSource = None
+if "audio_files" not in st.session_state:
+    st.session_state.audio_files = []
 
 rows_collection_chat = []
 rows_collection_chat_rag = []
 rows_collection_audio = []
+rows_collection_audio_log = []
 
 #page configs
 st.set_page_config(layout="wide")
@@ -55,6 +60,11 @@ col1_chat = qa_chat.columns(1)[0]
 col2_chat_rag = qa_rag.columns(1)[0]
 
 #functional scripts
+
+def color_text(color: str, text: str):
+    text = f"<span style=\"color:{color}\">{text}</span>"
+    return text
+
 def initialize_audio():
     st.session_state.startup = False
     if st.session_state.whisper_ds is not None:
@@ -201,10 +211,11 @@ def vector_load_from_file(filename: str):
 
 def transcribe(file: Path):
     with st.spinner(f"transcribing file {file.name}"):
+        start = time.time()
         data: AudioDataReadModel = st.session_state.audio_task.transcribe(file.as_posix())
-    
+        inference_time = time.time() - start
     add_row(data.text,"rows_audio")
-    add_row(f"`{datetime.datetime.now()}` - audio model: `{data.model}`", "rows_audio")
+    add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - audio model: `{data.model}` - file : `{file}`", "rows_audio")
     add_row("="*50, "rows_audio")
 
 def log(line: str, widget):
@@ -218,7 +229,7 @@ init_4bit_button = st.sidebar.button('Initialized 4bit')
 get_history = st.sidebar.button('show memory')
 
 if st.session_state.startup:
-    llm_init = False
+    llm_init = True
     audio_init = True
 
     if llm_init:
@@ -313,40 +324,51 @@ for uploaded_file in uploader:
 #
 audio_tab_main, audio_tab_right = audio_tab.columns([0.8, 0.2])
 
-audio_uploader = audio_tab_right.file_uploader("choose audio file(s) to upload (wav, flac or mp3)", accept_multiple_files=True)
-audio_files = []
 
-for uploaded_file in audio_uploader:
-    filename = uploaded_file.name
-    trgt_path = Path(f"tmp-data/audio/{filename}")
+with audio_tab_right.form("audio-uploader-form", clear_on_submit=True):
+    audio_uploader = st.file_uploader("choose audio file(s) to upload (wav, flac or mp3)", accept_multiple_files=True)
+    submitted = st.form_submit_button("UPLOAD")
+    
+    if submitted and audio_uploader is not None:
+        for uploaded_file in audio_uploader:
+            filename = uploaded_file.name
+            trgt_path = Path(f"tmp-data/audio/{filename}")
+            error_text = color_text("red", "ERROR")
+            if trgt_path.suffix not in (".wav",".flac",".mp3"):
+                add_row(f":red[ERROR] - :file {filename} is no a supported format","rows_audio_log")
+                continue
 
-    if trgt_path.suffix not in (".wav",".flac",".mp3"):
-        audio_tab_main.info(f"file {filename} is no a supported format")
-        continue
+            st.session_state.audio_files.append(trgt_path)
+            with open(trgt_path, "wb") as file:
+                file.write(uploaded_file.getbuffer())
 
-    audio_files.append(trgt_path)
-    with open(trgt_path, "wb") as file:
-        file.write(uploaded_file.getbuffer())
-    add_row(f"log - file {filename} uploaded", audio_tab_right)
+            add_row(f"`INFO` - file {filename} uploaded", "rows_audio_log")
 
-checkbox_labels = {p for p in audio_files}
+
+checkbox_labels = {p for p in st.session_state.audio_files}
 option = audio_tab_main.selectbox(
     'Choose and audio file to be played',
     checkbox_labels)
 
 if option != None:
     path = Path(option)
-    audio_tab_main.info(f"selected: {path.name}")
+    info = audio_tab_main.info(f"selected: {path.name}")
 
     audio_file = open(option, 'rb')
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
 
-    audio_tab_main.button("Send", type="primary" ,on_click=transcribe,args=(path,))
+    audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path,))
     audio_tab_main.button("Cancel", type="secondary")
+
+    info.empty()
 
 for data in st.session_state["rows_audio"][::-1]:
     row_data = generate_row_chat(data, audio_tab_main)
+    rows_collection_audio.append(row_data)
+
+for data in st.session_state["rows_audio_log"][::-1]:
+    row_data = generate_row_chat(data, audio_tab_right)
     rows_collection_audio.append(row_data)
 
 

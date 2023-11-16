@@ -14,6 +14,7 @@ import transformers
 import datetime
 import time
 import pandas as pd
+from pathlib import Path
 
 #create session state for rows
 if "rows" not in st.session_state:
@@ -190,12 +191,12 @@ def vector_load_from_web(content: str):
     vector_tab.button("Cancel", type="secondary")
 
 def vector_load_from_file(filename: str):
-    info = vector_tab.info(f"populating vector db with content from {filename}")
+    vector_tab.info(f"populating vector db with content from {filename}")
     st.session_state.ic.load_text_from_local(filename)
-    info.empty()
     return None
 
-#main
+### MAIN section
+#
 #sider
 init_8bit_button = st.sidebar.button('Initialized 8bit')
 init_4bit_button = st.sidebar.button('Initialized 4bit')
@@ -239,8 +240,8 @@ if get_history:
     add_row(get_memory(),"rows")
 
 
-
-#qa tab section
+### QA tab section
+#
 with col1_chat.form('chat'):
         text = st.text_area('Ask me something:', 'give me a list of animals?')
         submitted = st.form_submit_button('Submit')
@@ -252,7 +253,8 @@ for data in st.session_state["rows"][::-1]:
     row_data = generate_row_chat(data, chat_content)
     rows_collection_chat.append(row_data)
 
-#qa rag tab section
+### QA rag tab section
+#
 with col2_chat_rag.form('chat_rag'):
         text = st.text_area('RAG - Ask me something:', 'What is cloudera cml')
         submitted = st.form_submit_button('Submit')
@@ -265,7 +267,9 @@ for data in st.session_state["rows_rag"][::-1]:
     row_data = generate_row_chat(data, chat_rag_content)
     rows_collection_chat_rag.append(row_data)
 
-#vectors section
+
+### VECTORS section
+#
 col_url, col_upload = vector_tab.columns([0.8, 0.2]) 
 
 
@@ -285,18 +289,48 @@ for uploaded_file in uploader:
         file.write(uploaded_file.getbuffer())
     info = vector_tab.info(f"file {filename} uploaded")
     vector_load_from_file(trgt_path)
+    info.empty()
 
 
 
 
-# audio tab section
-main, side = audio_tab.columns([0.8, 0.2])
+### AUDIO tab section
+#
+audio_tab_main, audio_tab_right = audio_tab.columns([0.8, 0.2])
 
-audio_uploader = side.file_uploader("choose audio file(s) to upload", accept_multiple_files=True)
+audio_uploader = audio_tab_right.file_uploader("choose audio file(s) to upload (wav, flac or mp3)", accept_multiple_files=True)
+audio_files = []
 
-    
+for uploaded_file in audio_uploader:
+    filename = uploaded_file.name
+    trgt_path = Path(f"tmp-data/audio/{filename}")
 
-#css
+    if trgt_path.suffix not in (".wav",".flac",".mp3"):
+        audio_tab_main.info(f"file {filename} is no a supported format")
+        continue
+
+    audio_files.append(trgt_path)
+    with open(trgt_path, "wb") as file:
+        file.write(uploaded_file.getbuffer())
+    info = audio_tab.info(f"file {filename} uploaded")
+
+checkbox_labels = {p for p in audio_files}
+option = audio_tab_main.selectbox(
+    'Choose and audio file to be played',
+    checkbox_labels)
+
+if option != None:
+    audio_tab_main.info(f"selected: {option}")
+    path = Path(option)
+    audio_file = open(option, 'rb')
+    audio_bytes = audio_file.read()
+    audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
+
+
+
+
+### CSS section
+#
 css = '''
 <style>
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {

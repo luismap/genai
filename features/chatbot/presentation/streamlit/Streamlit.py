@@ -51,6 +51,7 @@ col2_chat_rag = qa_rag.columns(1)[0]
 
 #functional scripts
 def initialize_audio():
+    st.session_state.startup = False
     if st.session_state.whisper_ds is not None:
         del st.session_state.audio_task
         del st.session_state.audio_ctr
@@ -147,7 +148,7 @@ def chat(input_text):
 
     add_row(data.answer,"rows")
     add_row(f"`{datetime.datetime.now()}` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
-    add_row("="*50, "rows_rag")
+    add_row("="*50, "rows")
 
     info = st.info("response generated")
     time.sleep(1)
@@ -188,6 +189,12 @@ def vector_load_from_web(content: str):
     vector_tab.button("Send", type="primary" ,on_click=generate_web_button,args=(urls_list,))
     vector_tab.button("Cancel", type="secondary")
 
+def vector_load_from_file(filename: str):
+    info = vector_tab.info(f"populating vector db with content from {filename}")
+    st.session_state.ic.load_text_from_local(filename)
+    info.empty()
+    return None
+
 #main
 #sider
 init_8bit_button = st.sidebar.button('Initialized 8bit')
@@ -195,16 +202,21 @@ init_4bit_button = st.sidebar.button('Initialized 4bit')
 get_history = st.sidebar.button('show memory')
 
 if st.session_state.startup:
-    ic, llm, cb_ctr = initialiaze_model("4bit")
-    st.session_state.ic = ic
-    st.session_state.llm = llm
-    st.session_state.cb_ctr = cb_ctr
+    llm_init = False
+    audio_init = True
 
-    wds, audio_ctr, audio_task = initialize_audio()
+    if llm_init:
+        ic, llm, cb_ctr = initialiaze_model("4bit")
+        st.session_state.ic = ic
+        st.session_state.llm = llm
+        st.session_state.cb_ctr = cb_ctr
 
-    st.session_state.audio_task = audio_task
-    st.session_state.audio_ctr = audio_ctr
-    st.session_state.whisper_ds = wds
+    if audio_init:
+        wds, audio_ctr, audio_task = initialize_audio()
+
+        st.session_state.audio_task = audio_task
+        st.session_state.audio_ctr = audio_ctr
+        st.session_state.whisper_ds = wds
 
 
 
@@ -254,7 +266,7 @@ for data in st.session_state["rows_rag"][::-1]:
     rows_collection_chat_rag.append(row_data)
 
 #vectors section
-col_url, col_upload = vector_tab.columns(2) 
+col_url, col_upload = vector_tab.columns([0.8, 0.2]) 
 
 
 with col_url.form("url-form"):
@@ -264,11 +276,24 @@ with col_url.form("url-form"):
     if submitted:
         vector_load_from_web(text)
 
-uploader = col_upload.file_uploader("Choose a CSV file", accept_multiple_files=True)
+uploader = col_upload.file_uploader("choose text file(s) to upload", accept_multiple_files=True)
 
 for uploaded_file in uploader:
     filename = uploaded_file.name
-    bytes_data = uploaded_file.read()
+    trgt_path = f"tmp-data/text/{filename}"
+    with open(trgt_path, "wb") as file:
+        file.write(uploaded_file.getbuffer())
+    info = vector_tab.info(f"file {filename} uploaded")
+    vector_load_from_file(trgt_path)
+
+
+
+
+# audio tab section
+main, side = audio_tab.columns([0.8, 0.2])
+
+audio_uploader = side.file_uploader("choose audio file(s) to upload", accept_multiple_files=True)
+
     
 
 #css

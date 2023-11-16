@@ -7,5 +7,5 @@ from pydantic import BaseModel
 class AudioData(BaseModel):
     model: str
     source_audio: str
-    text_decode: str
+    text: str
     chunks: List[dict]

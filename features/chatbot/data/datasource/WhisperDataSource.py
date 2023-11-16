@@ -18,13 +18,26 @@ class WhisperDataSource(AudioDataSource):
     def is_available() -> bool:
         return True
     
-    def translate(self, audio_file, src_language: str = "english") -> AudioDataReadModel:
-        translation = self._audio_pipeline(audio_file
+    def transcribe(self, audio_file, src_language: str = "english") -> AudioDataReadModel:
+        transcribe = self._audio_pipeline(audio_file
                                            ,generate_kwargs={"language": src_language})
         adrm = AudioDataReadModel(
             model=self._model_id
             ,source_audio=audio_file
-            ,text_decode=translation["text"]
+            ,text=transcribe["text"]
+            ,chunks=transcribe["chunks"]
+        )
+        return adrm
+
+    def translate(self, audio_file, src_language: str = "english") -> AudioDataReadModel:
+        generate_kwargs={"language": src_language
+                         ,"task": "translate"}
+        translation = self._audio_pipeline(audio_file
+                                           ,generate_kwargs=generate_kwargs)
+        adrm = AudioDataReadModel(
+            model=self._model_id
+            ,source_audio=audio_file
+            ,text=translation["text"]
             ,chunks=translation["chunks"]
         )
         return adrm

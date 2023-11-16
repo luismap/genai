@@ -10,7 +10,7 @@ class AudioDataSource(ABC):
         pass
 
     @abstractmethod
-    def transcribe(audio_file) -> AudioDataReadModel:
+    def transcribe(audio_file, src_language: str) -> AudioDataReadModel:
         pass
 
     @abstractmethod

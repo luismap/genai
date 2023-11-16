@@ -174,7 +174,7 @@ def chat_rag(input_text):
     with st.spinner("asking llm"):
         start_time = time.time()
         data: ChatBotResponseModel = st.session_state.ic.ask_with_rag(input_text)
-        inference_time = time.time() - start_time()
+        inference_time = time.time() - start_time
     model_use = data.model_use
     qbm = st.session_state.current_qbit_mode
     add_row(data.answer,"rows_rag")

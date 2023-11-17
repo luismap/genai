@@ -1,11 +1,11 @@
 
+from typing import List, Tuple
 from core.llm.models.llama2.Llama2Huggingface import Llama2Hugginface, Llama2Prompt
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
-from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain.chains import ConversationChain, ConversationalRetrievalChain
+from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 
@@ -60,8 +60,14 @@ class Llama2DataSource(ChatBotDataSource):
                                 answer=answer_top_1)
         return cbrm
 
-    def chat(self, question: str) -> ChatBotReadModel:
-        """interactive chat using langchain ConverstationChain class.
+    def _get_history(self) -> List[Tuple[str,str]]:
+        messages = self._llm_source._chat_chain_memory.chat_memory.messages
+        messages_parsed = [(messages[i].content, messages[i+1].content)for i in [i for i in range(0,len(messages),2)]]
+        return messages_parsed
+    
+    def chat(self, question: str, history: bool = False) -> ChatBotReadModel:
+        """
+        interactive chat using langchain `ConversationChain` class.
         You will be able to pose question to the model initialized by
         this class
 
@@ -71,9 +77,12 @@ class Llama2DataSource(ChatBotDataSource):
         Returns:
             ChatBotReadModel: response chatbot model
         """
+
+        response_history = self._get_history() if history else []
         answer = self._chat_chain.predict(input=question)
         cbrm =  ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
                                 answer=answer,
+                                chat_history= response_history
                                 )
         return cbrm

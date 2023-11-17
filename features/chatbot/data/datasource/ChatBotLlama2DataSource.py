@@ -18,7 +18,6 @@ class Llama2DataSource(ChatBotDataSource):
     """
 
     def __init__(self,
-                 vector_db: VectorDbSource,
                  bnb_config: BitsAndBytesConfig = None
                  ) -> None:
         l2hf = Llama2Hugginface()
@@ -44,17 +43,6 @@ class Llama2DataSource(ChatBotDataSource):
                                memory=self._chat_chain_memory
                               )
 
-        #for rag
-        self._chat_rag_history = []
-        self._vector_db = vector_db
-        self._conversational_rag_chain: ConversationalRetrievalChain = ConversationalRetrievalChain.from_llm(
-              self._langchain_hf_pipeline,
-              vector_db.retriever(),
-              return_source_documents=False,
-              rephrase_question=False
-        )
-
-        return None
     
     def is_available(self) -> bool:
         #need to be tweaked for fallbacks
@@ -72,25 +60,6 @@ class Llama2DataSource(ChatBotDataSource):
                                 answer=answer_top_1)
         return cbrm
 
-    def chat_rag(self,
-                question: str,
-                get_history:bool = False) -> ChatBotReadModel:
-        
-        question_formatted = self._basic_prompt.format(user_message=question)
-        retrieval_qa_format = {"question": question_formatted,
-                       "chat_history": self._chat_rag_history}
-        answer = self._conversational_rag_chain(retrieval_qa_format)
-
-        self._chat_rag_history.append((question,answer["answer"]))
-
-        response_history = self._chat_rag_history if get_history else []
-
-        cbrm = ChatBotReadModel(question=question,
-                                model_use=self._l2hf.model_id,
-                                answer=answer["answer"],
-                                chat_history=response_history)
-        return cbrm
-    
     def chat(self, question: str) -> ChatBotReadModel:
         """interactive chat using langchain ConverstationChain class.
         You will be able to pose question to the model initialized by

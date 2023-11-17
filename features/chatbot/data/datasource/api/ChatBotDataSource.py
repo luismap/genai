@@ -14,10 +14,5 @@ class ChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def chat_rag(question: str,
-                 get_history:bool = False) -> ChatBotReadModel:
-        pass
-
-    @abstractmethod
     def chat(question:str) -> ChatBotReadModel:
         pass

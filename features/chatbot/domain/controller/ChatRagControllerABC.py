@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
 
 
-class ChatBotControllerABC(ABC):
+
+class ChatRagControllerABC(ABC):
     @abstractmethod
-    def chat_rag(question:str) -> ChatBotReadModel:
+    def chat_rag(question:str, history: bool) -> ChatRagReadModel:
         pass
 
     @abstractmethod

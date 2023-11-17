@@ -14,5 +14,9 @@ class ChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def chat(question:str) -> ChatBotReadModel:
+    def chat(question:str, history: bool) -> ChatBotReadModel:
+        pass
+
+    @abstractmethod
+    def clean_memory() -> bool:
         pass

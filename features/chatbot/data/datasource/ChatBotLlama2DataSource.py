@@ -61,9 +61,13 @@ class Llama2DataSource(ChatBotDataSource):
         return cbrm
 
     def _get_history(self) -> List[Tuple[str,str]]:
-        messages = self._llm_source._chat_chain_memory.chat_memory.messages
+        messages = self._chat_chain_memory.chat_memory.messages
         messages_parsed = [(messages[i].content, messages[i+1].content)for i in [i for i in range(0,len(messages),2)]]
         return messages_parsed
+    
+    def clean_memory(self) -> bool:
+        self._chat_chain_memory.clear()
+        return True
     
     def chat(self, question: str, history: bool = False) -> ChatBotReadModel:
         """

@@ -22,13 +22,13 @@ def ask(payload):
     example:
     {
     "task": "predict",
-    "question": "give me a list of 5 animals? be short in your answer"
-    "history": false
+    "question": "give me a list of 5 animals? be short in your answer",
+    "history": "false"
     },
     {
     "task": "clean_context",
-    "question": ""
-    "history": false
+    "question": "",
+    "history": "false"
     }
  
     Args:
@@ -39,7 +39,8 @@ def ask(payload):
     """
     if payload["task"] == "predict":
         question = payload["question"]
-        answer = ic.ask_me_something(question, payload["history"])
+        history = True if payload["history"] == "true" else False
+        answer = ic.ask_me_something(question, history)
         return answer.dict()
     if payload["task"] == "clean_context":
         answer = ic.clean_context()

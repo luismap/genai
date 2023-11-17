@@ -1,11 +1,7 @@
-
-
 import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
-from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
-from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
 from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
 from features.chatbot.domain.controller.ChatBotControllerABC import ChatBotControllerABC
 
@@ -25,30 +21,14 @@ class ChatBotController(ChatBotControllerABC):
         self._app_state = self._app_props["env"]
         self._logger = logging.getLogger(self._app_props["logger"])
         self._chat_datasource = MyUtils.first(datasources, lambda ds: ds.is_available == True)
-        self._vector_db: VectorDbSource = self._chat_datasource._vector_db
 
         self._logger.info("chatbot controller initialized")
 
         return None
 
-    def chat(self, question: str) -> ChatBotReadModel:
-        answer = self._chat_datasource.chat(question)
+    def chat(self, question: str, history: bool = False) -> ChatBotReadModel:
+        answer = self._chat_datasource.chat(question, history)
         return answer
-
-    #TODO add history flag
-    def chat_rag(self,question: str) -> ChatBotReadModel:
-        answer = self._chat_datasource.chat_rag(question)
-        return answer
-
-    def load_text_from_local(self,path: str) -> bool:
-        loaded = self._vector_db.load_text_from_local(path)
-        return loaded
-
-    def load_from_web(self, links: List[str]) -> bool:
-        web_loaded = self._vector_db.load_from_web(links)
-        return web_loaded
 
     def clean_context(self) -> bool:
-        if isinstance(self._chat_datasource, Llama2DataSource):
-            self._chat_datasource._chat_rag_history = []
-        return self._vector_db.clean_db()
+        return self._chat_datasource.clean_memory()

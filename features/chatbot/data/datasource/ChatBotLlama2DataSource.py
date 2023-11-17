@@ -82,8 +82,9 @@ class Llama2DataSource(ChatBotDataSource):
             ChatBotReadModel: response chatbot model
         """
 
-        response_history = self._get_history() if history else []
         answer = self._chat_chain.predict(input=question)
+        response_history = self._get_history() if history else []
+
         cbrm =  ChatBotReadModel(question=question,
                                 model_use=self._l2hf.model_id,
                                 answer=answer,

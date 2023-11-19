@@ -5,7 +5,7 @@ class ChatBot(BaseModel):
     user_id: str = "default"
     question: str
     chat_history: List[Tuple[str,str]] = []
-    batch_history: str = []
+    batch_history: str = ""
     model_use: str
     answer: str
 

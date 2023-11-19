@@ -84,8 +84,8 @@ class Llama2Hugginface:
         tokenizer = AutoTokenizer.from_pretrained(
                 self.model_id, 
                 use_auth_token=self.settings.hf_token)
-        tokenizer.pad_token = "[PAD]"
-        tokenizer.padding_side = "right"
+        #tokenizer.pad_token = "[PAD]"
+        #tokenizer.padding_side = "right"
         return tokenizer
     
     def model_quantize(self,
@@ -149,7 +149,7 @@ class Llama2Hugginface:
                             tokenizer=self.tokenizer(),
                             return_full_text=full_text,  # langchain expects the full text
                             task=task,
-                            batch_size=batch_size,
+                            #batch_size=batch_size,
                             # we pass model parameters here too
                             temperature=temperature,  # 'randomness' of outputs, 0.0 is the min and 1.0 the max
                             max_new_tokens=max_new_tokens,  # max number of tokens to generate in the output

@@ -3,7 +3,7 @@ from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from features.chatbot.data.controller.ChatBotController import ChatBotController
 from features.chatbot.data.controller.AudioController import AudioController
 from features.chatbot.data.datasource.FaissLangchainVectorDbSource import FaissLangchainVectorDbSource
-from features.chatbot.data.datasource.Llama2DataSource import Llama2DataSource
+from features.chatbot.data.datasource.ChatBotLlama2DataSource import Llama2DataSource
 from features.chatbot.data.datasource.WhisperDataSource import WhisperDataSource
 from features.chatbot.data.models.ChatBotModel import ChatBotResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat

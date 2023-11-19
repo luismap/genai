@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel
-from features.chatbot.domain.entity.ChatBot import ChatBot
+from features.chatbot.domain.entity.ChatBot import ChatBot, ChatBotPayload
 from datetime import datetime
 
 class ChatBotModel(ChatBot):
@@ -14,3 +14,6 @@ class ChatBotResponseModel(BaseModel):
     answer: str
     model_use: str
     question: str
+
+class ChatBotPayloadModel(ChatBotPayload):
+    pass

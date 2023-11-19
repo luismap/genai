@@ -15,7 +15,7 @@ class ChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def chat(question:List[ChatBotPayloadModel]) -> ChatBotReadModel:
+    def chat(question:List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:
         pass
 
     @abstractmethod

@@ -89,7 +89,10 @@ class Llama2DataSource(ChatBotDataSource):
     def clean_user_history(self, user_id: str) -> bool:
         if user_id in self._users:
             self._user_info[user_id]["history"] = []
-        return True
+            return True
+        else: #TODO add exception 
+            return False
+        
     
     def _generate_history(self,history: List[Tuple[str, str]]) -> str:
         """

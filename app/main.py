@@ -3,10 +3,12 @@ from fastapi import Body, FastAPI
 import logging
 import logging.config
 import yaml
-from app.asyncbatch import batch_processing_loop, batch_translate, initialize_model
+from app.asyncbatch import batch_ask, batch_processing_loop, initialize_model
 from core.utils.MyUtils import MyUtils
 import concurrent
 import time
+
+from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotReadModel, ChatBotResponseModel
 
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]
@@ -36,9 +38,12 @@ def read_root():
     if canlog: logger.info("root got call")
     return {"core": "fast api core setup"}
 
-@app.post("/text")
-async def translate_text(text: str):
+@app.post("/ask_llm")
+async def ask_llm(model: ChatBotPayloadModel) -> ChatBotResponseModel:
     start = time.time()
-    translate = await batch_translate(text, "english")
+    cbread = await batch_ask(model) #will return a serialized dict
+    #logger.info(f"type of returned object: {cbread.__dict__}")
+    cbresponse = ChatBotResponseModel(**cbread)
     end = time.time() - start
-    return {"text": translate, "response_time": end}
+    logger.info(f"{cbresponse.question} took: {end} seconds")
+    return cbresponse

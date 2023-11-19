@@ -4,12 +4,12 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
+from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotReadModel
 
 
 class ChatBotControllerABC(ABC):
     @abstractmethod
-    def chat(question:str) -> ChatBotReadModel:
+    def chat(cb_payloads:List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:
         """given a question, return a chatbot model
         with an answer to the question
 
@@ -22,5 +22,5 @@ class ChatBotControllerABC(ABC):
         pass
 
     @abstractmethod
-    def clean_context() -> bool:
+    def clean_context(user_id: str) -> bool:
         pass

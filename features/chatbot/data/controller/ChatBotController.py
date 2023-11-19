@@ -2,7 +2,7 @@ import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
-from features.chatbot.data.models.ChatBotModel import ChatBotReadModel
+from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotReadModel
 from features.chatbot.domain.controller.ChatBotControllerABC import ChatBotControllerABC
 
 
@@ -26,9 +26,9 @@ class ChatBotController(ChatBotControllerABC):
 
         return None
 
-    def chat(self, question: str, history: bool = False) -> ChatBotReadModel:
-        answer = self._chat_datasource.chat(question, history)
+    def chat(self, cb_payloads: List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:
+        answer = self._chat_datasource.chat(cb_payloads)
         return answer
 
-    def clean_context(self) -> bool:
-        return self._chat_datasource.clean_memory()
+    def clean_context(self, user_id) -> bool:
+        return self._chat_datasource.clean_user_history(user_id)

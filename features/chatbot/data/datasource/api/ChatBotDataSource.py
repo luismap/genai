@@ -19,7 +19,7 @@ class ChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def clean_memory() -> bool:
+    def clean_memory(user_id: str) -> bool:
         pass
 
     @abstractmethod

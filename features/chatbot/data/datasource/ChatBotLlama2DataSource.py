@@ -34,7 +34,9 @@ class Llama2DataSource(ChatBotDataSource):
         else:
             raise Exception("full model needs to be implemented")
 
-        self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model, full_text=False)
+        self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model
+                                                                ,full_text=False
+                                                                ,batch_size=32)
         self._l2hf = l2hf
         self._llm_model = llm_model
         #self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline, batch_size=12)

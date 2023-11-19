@@ -127,7 +127,8 @@ class Llama2Hugginface:
                             temperature: float = 0.1,
                             max_new_tokens: int = 512,
                             repetition_penalty: float = 1.1,
-                            full_text: bool = True
+                            full_text: bool = True,
+                            batch_size: int = 1
                             ):
         """given a custom pretrained model, create a huggingface
         pipeline.
@@ -146,6 +147,7 @@ class Llama2Hugginface:
                             tokenizer=self.tokenizer(),
                             return_full_text=full_text,  # langchain expects the full text
                             task=task,
+                            bath_size=batch_size,
                             # we pass model parameters here too
                             temperature=temperature,  # 'randomness' of outputs, 0.0 is the min and 1.0 the max
                             max_new_tokens=max_new_tokens,  # max number of tokens to generate in the output

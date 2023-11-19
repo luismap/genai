@@ -36,7 +36,7 @@ class Llama2DataSource(ChatBotDataSource):
 
         self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model
                                                                 ,full_text=False
-                                                                ,batch_size=32)
+                                                                ,batch_size=1)
         self._l2hf = l2hf
         self._llm_model = llm_model
         #self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline, batch_size=12)

@@ -1,6 +1,9 @@
+import asyncio
+from app.asyncbatch import batch_ask, batch_processing_loop
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from features.chatbot.data.datasource.ChatBotLlama2DataSource import Llama2DataSource
 from features.chatbot.data.controller.ChatBotController import ChatBotController
+from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 
 
@@ -9,8 +12,11 @@ llm_source = Llama2DataSource(bnb_config)
 chat_ctr = ChatBotController([llm_source])
 ic = InteractiveChat(chat_ctr)
 
+loop = asyncio.get_event_loop()
+loop.create_task(batch_processing_loop(loop))
 
-def ask(payload):
+
+async def ask(payload):
     """
     given a task and a question, produce an answer base on the initialized model
     payload accepted params:
@@ -22,6 +28,7 @@ def ask(payload):
     example:
     {
     "task": "predict",
+    "user_id": "default",
     "question": "give me a list of 5 animals? be short in your answer",
     "history": "false"
     },
@@ -38,11 +45,10 @@ def ask(payload):
         dict: ChatBotReadModel like dict
     """
     if payload["task"] == "predict":
-        question = payload["question"]
-        history = True if payload["history"] == "true" else False
-        answer = ic.ask_me_something(question, history)
+        model = ChatBotPayloadModel(**payload)
+        answer = await batch_ask(model) #will return a serialized dict
         return answer.dict()
     if payload["task"] == "clean_context":
-        answer = ic.clean_context()
+        answer = ic.clean_context(payload["user_id"])
         return {"cleaned_context": True}
     return None

@@ -1,16 +1,6 @@
 import asyncio
-from app.asyncbatch import batch_ask, batch_processing_loop
-from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
-from features.chatbot.data.datasource.ChatBotLlama2DataSource import Llama2DataSource
-from features.chatbot.data.controller.ChatBotController import ChatBotController
+from app.asyncbatch import batch_ask, batch_processing_loop, clean_user_context
 from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel
-from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
-
-
-bnb_config = BitsAndBytesConfig()
-llm_source = Llama2DataSource(bnb_config)
-chat_ctr = ChatBotController([llm_source])
-ic = InteractiveChat(chat_ctr)
 
 loop = asyncio.get_event_loop()
 loop.create_task(batch_processing_loop(loop))
@@ -49,6 +39,6 @@ async def ask(payload):
         answer = await batch_ask(model) #will return a serialized dict
         return answer.dict()
     if payload["task"] == "clean_context":
-        answer = ic.clean_context(payload["user_id"])
-        return {"cleaned_context": True}
+        answer = clean_user_context(payload["user_id"])
+        return {"cleaned_context": answer}
     return None

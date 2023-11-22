@@ -58,6 +58,9 @@ def initialize_model():
 	global model
 	model = "33"
 
+def clean_user_context(user_id: str) -> bool:
+	return ic.clean_context(user_id=user_id)
+
 def predict(contexts):
 	texts = []
 	for context in contexts:

@@ -1,5 +1,7 @@
 
 from abc import ABC, abstractmethod
+from typing import List
+from features.chatbot.data.models.ChatBotModel import ChatRagPayloadModel
 
 from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
 
@@ -15,9 +17,7 @@ class RagChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def chat_rag(question: str,
-                 get_history:bool,
-                 user_id: str) -> ChatRagReadModel:
+    def chat_rag(chatrag_models: List[ChatRagPayloadModel]) -> ChatRagReadModel:
         pass
 
     @abstractmethod

@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from features.chatbot.domain.entity.ChatBot import ChatBot, ChatBotPayload
 from datetime import datetime
 
+from features.chatbot.domain.entity.ChatRag import ChatRagPayload
+
 class ChatBotModel(ChatBot):
     date_created: str = str(datetime.now())
 
@@ -16,4 +18,8 @@ class ChatBotResponseModel(BaseModel):
     question: str
 
 class ChatBotPayloadModel(ChatBotPayload):
+    pass
+
+
+class ChatRagPayloadModel(ChatRagPayload):
     pass

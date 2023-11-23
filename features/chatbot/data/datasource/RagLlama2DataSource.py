@@ -7,7 +7,7 @@ from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.chains import ConversationalRetrievalChain
 from langchain import PromptTemplate
-from features.chatbot.data.models.ChatBotModel import ChatRagPayloadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel
 
 from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
 

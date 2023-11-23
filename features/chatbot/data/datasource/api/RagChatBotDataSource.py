@@ -1,7 +1,7 @@
 
 from abc import ABC, abstractmethod
 from typing import List
-from features.chatbot.data.models.ChatBotModel import ChatRagPayloadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel
 
 from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
 

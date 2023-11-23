@@ -62,7 +62,14 @@ class RagLlama2DataSource(RagChatBotDataSource):
             return True
         else:
             return False
-    
+
+    def clean_user_history(self, user_id: str) -> bool:
+        if user_id not in self._users:
+            return False #add exception
+        else:
+            self._user_info[user_id]["history"] = []
+            return True
+
     def is_available(self) -> bool:
         #need to be tweaked for fallbacks
         return True

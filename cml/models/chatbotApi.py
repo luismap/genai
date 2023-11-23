@@ -24,8 +24,7 @@ async def ask(payload):
     },
     {
     "task": "clean_context",
-    "question": "",
-    "history": "false"
+    "user_id": "false"
     }
  
     Args:

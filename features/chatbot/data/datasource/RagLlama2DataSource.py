@@ -36,7 +36,7 @@ class RagLlama2DataSource(RagChatBotDataSource):
         self._chatchain_prompt = PromptTemplate.from_template(Llama2Prompt.chatchain_prompt_template)
 
         #for rag
-        self._chat_rag_history = []
+        
         self._vector_db = vector_db
         self._conversational_rag_chain: ConversationalRetrievalChain = ConversationalRetrievalChain.from_llm(
               self._langchain_hf_pipeline,
@@ -44,8 +44,24 @@ class RagLlama2DataSource(RagChatBotDataSource):
               return_source_documents=False,
               rephrase_question=False
         )
+        chat_rag_history = []
+        self._user_info = {"default":
+                                {"get_history":"false",
+                                 "history": chat_rag_history}
+                                }
 
-        return None
+        self._users = {"default"}
+
+    def _add_user(self, user_name: str):
+        if user_name not in self._users:
+            chat_rag_history = []
+            self._user_info[user_name] = {"get_history":"false",
+                                "history":chat_rag_history}
+                                
+            self._users.add(user_name)
+            return True
+        else:
+            return False
     
     def is_available(self) -> bool:
         #need to be tweaked for fallbacks
@@ -64,17 +80,25 @@ class RagLlama2DataSource(RagChatBotDataSource):
         return cbrm
 
     def chat_rag(self,
+                user_id: str,
                 question: str,
-                get_history:bool = False) -> ChatRagReadModel:
+                get_history:bool = False,
+                ) -> ChatRagReadModel:
         
+        if user_id not in self._users:
+            self._add_user(user_name=user_id)
+
         question_formatted = self._basic_prompt.format(user_message=question)
+
+        chat_history = self._user_info[user_id]["history"]
         retrieval_qa_format = {"question": question_formatted,
-                       "chat_history": self._chat_rag_history}
+                       "chat_history": chat_history}
+        
         answer = self._conversational_rag_chain(retrieval_qa_format)
 
-        self._chat_rag_history.append((question,answer["answer"]))
+        self._user_info[user_id]["history"].append((question,answer["answer"]))
 
-        response_history = self._chat_rag_history if get_history else []
+        response_history = self._user_info[user_id]["history"]if get_history else []
 
         cbrm = ChatRagReadModel(question=question,
                                 model_use=self._l2hf.model_id,

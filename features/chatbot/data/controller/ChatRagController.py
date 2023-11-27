@@ -6,7 +6,7 @@ from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.RagLlama2DataSource import RagLlama2DataSource
 from features.chatbot.data.datasource.api.RagChatBotDataSource import RagChatBotDataSource
 from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
-from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, ChatRagReadModel
 from features.chatbot.domain.controller.ChatRagControllerABC import ChatRagControllerABC
 
 
@@ -31,8 +31,8 @@ class ChatRagController(ChatRagControllerABC):
 
         return None
 
-    def chat_rag(self,question: str, history: bool = False) -> ChatRagReadModel:
-        answer = self._chat_datasource.chat_rag(question, history)
+    def chat_rag(self,crpms = List[ChatRagPayloadModel]) -> ChatRagReadModel:
+        answer = self._chat_datasource.chat_rag(crpms)
         return answer
 
     def load_text_from_local(self,path: str) -> bool:
@@ -43,7 +43,6 @@ class ChatRagController(ChatRagControllerABC):
         web_loaded = self._vector_db.load_from_web(links)
         return web_loaded
 
-    def clean_context(self) -> bool:
-        if isinstance(self._chat_datasource, RagLlama2DataSource):
-            self._chat_datasource._chat_rag_history = []
-        return self._vector_db.clean_db()
+    def clean_context(self, user_id) -> bool:
+        cleaned = self._chat_datasource.clean_user_history(user_id)
+        return cleaned

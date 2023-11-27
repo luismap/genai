@@ -3,7 +3,7 @@ from fastapi import Body, FastAPI
 import logging
 import logging.config
 import yaml
-from app.asyncbatch import batch_ask, batch_processing_loop, initialize_model
+from app.InteractiveChatAsyncbatch import batch_ask, batch_processing_loop, initialize_model
 from core.utils.MyUtils import MyUtils
 import concurrent
 import time

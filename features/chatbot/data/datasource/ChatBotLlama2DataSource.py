@@ -24,8 +24,9 @@ class Llama2DataSource(ChatBotDataSource):
         ChatBotDataSource : abstract class which decides main interactions
     """
 
-    def __init__(self,
-                 bnb_config: BitsAndBytesConfig = None
+    def __init__(self
+                 ,bnb_config: BitsAndBytesConfig = None
+                 ,device: str = "auto"
                  ) -> None:
         l2hf = Llama2Hugginface()
         
@@ -36,6 +37,7 @@ class Llama2DataSource(ChatBotDataSource):
 
         self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model
                                                                 ,full_text=False
+                                                                ,device=device
                                                                 )
         self._l2hf = l2hf
         self._llm_model = llm_model

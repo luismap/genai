@@ -130,7 +130,8 @@ class Llama2Hugginface:
                             max_new_tokens: int = 512,
                             repetition_penalty: float = 1.1,
                             full_text: bool = True,
-                            batch_size: int = 1
+                            batch_size: int = 1,
+                            device: str ="auto"
                             ):
         """given a custom pretrained model, create a huggingface
         pipeline.
@@ -153,12 +154,14 @@ class Llama2Hugginface:
                             # we pass model parameters here too
                             temperature=temperature,  # 'randomness' of outputs, 0.0 is the min and 1.0 the max
                             max_new_tokens=max_new_tokens,  # max number of tokens to generate in the output
-                            repetition_penalty=repetition_penalty  # without this output begins repeating
+                            repetition_penalty=repetition_penalty,  # without this output begins repeating
+                            device_map=device
         )
         return pline
     
     def pipeline(self,
-                 task: str = "text-generation"):
+                 task: str = "text-generation"
+                 ,device: str ="auto"):
         """return a base huggingface pipeline
         for the current model.
         Will get the model that is mapped as default by huggingface pipeline
@@ -173,5 +176,5 @@ class Llama2Hugginface:
         task,
         model=self.model_id,
         torch_dtype=float16,
-        device_map='auto') #TODO check for custom device map
+        device_map=device) #TODO check for custom device map
         return huggingface_pipeline

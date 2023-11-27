@@ -2,7 +2,7 @@
 
 from typing import List
 from features.chatbot.data.controller.ChatRagController import ChatRagController
-from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, ChatRagReadModel
 
 
 class RagInteractiveChat:
@@ -10,8 +10,8 @@ class RagInteractiveChat:
                  chatbot_controller: ChatRagController) -> None:
         self._chatbot_ctr = chatbot_controller
     
-    def ask(self, question: str, history: bool = False) -> ChatRagReadModel:
-        answer = self._chatbot_ctr.chat_rag(question, history)
+    def ask(self, crpms = List[ChatRagPayloadModel]) -> List[ChatRagReadModel]:
+        answer = self._chatbot_ctr.chat_rag(crpms=crpms)
         return answer
 
     def load_text_from_local(self,path: str) -> bool:
@@ -22,5 +22,5 @@ class RagInteractiveChat:
         web_loaded = self._chatbot_ctr.load_from_web(links)
         return web_loaded
 
-    def clean_context(self) -> bool:
-        return self._chatbot_ctr.clean_context()
+    def clean_context(self, user_id = str) -> bool:
+        return self._chatbot_ctr.clean_context(user_id=user_id)

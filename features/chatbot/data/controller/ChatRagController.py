@@ -31,9 +31,9 @@ class ChatRagController(ChatRagControllerABC):
 
         return None
 
-    def chat_rag(self,crpms = List[ChatRagPayloadModel]) -> ChatRagReadModel:
-        answer = self._chat_datasource.chat_rag(crpms)
-        return answer
+    def chat_rag(self,crpms = List[ChatRagPayloadModel]) -> List[ChatRagReadModel]:
+        answers = self._chat_datasource.chat_rag(crpms)
+        return answers
 
     def load_text_from_local(self,path: str) -> bool:
         loaded = self._vector_db.load_text_from_local(path)

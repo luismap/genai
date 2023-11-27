@@ -1,5 +1,5 @@
 import asyncio
-from app.asyncbatch import batch_ask, batch_processing_loop, clean_user_context
+from app.InteractiveChatAsyncbatch import batch_ask, batch_processing_loop, clean_user_context
 from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel
 
 loop = asyncio.get_event_loop()

@@ -21,7 +21,8 @@ class RagLlama2DataSource(RagChatBotDataSource):
 
     def __init__(self,
                  vector_db: VectorDbSource,
-                 bnb_config: BitsAndBytesConfig = None
+                 bnb_config: BitsAndBytesConfig = None,
+                 device: str = "auto"
                  ) -> None:
         l2hf = Llama2Hugginface()
         
@@ -30,7 +31,8 @@ class RagLlama2DataSource(RagChatBotDataSource):
         else:
             raise Exception("full model needs to be implemented")
 
-        self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model)
+        self._hf_pipeline = l2hf.pipeline_from_pretrained_model(llm_model
+                                                                ,device=device)
         self._l2hf = l2hf
         self._llm_model = llm_model
         self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline)

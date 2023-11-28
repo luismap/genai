@@ -1,11 +1,10 @@
 
 import time
 from fastapi import APIRouter
-from app.batch.InteractiveChatAsyncbatch import batch_ask
+from app.batch.InteractiveChatAsyncbatch import batch_ask, ic
 import logging
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotResponseModel
-
 
 router = APIRouter(
     prefix="/qabot",
@@ -13,6 +12,7 @@ router = APIRouter(
 )
 appProps = MyUtils.load_properties("general")["app"]
 logger = logging.getLogger(appProps["logger"])
+
 
 
 @router.post("/ask")
@@ -24,3 +24,7 @@ async def ask_llm(model: ChatBotPayloadModel) -> ChatBotResponseModel:
     end = time.time() - start
     logger.info(f"{cbresponse.question} took: {end} seconds")
     return cbresponse
+
+@router.post("/clean-user-context")
+def clean_context(user_id: str):
+    return ic.clean_context(user_id)

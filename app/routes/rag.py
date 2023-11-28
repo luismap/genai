@@ -12,7 +12,7 @@ import app.batch.RagChatAsyncbatch  as ragchat_ab
 
 router = APIRouter(
     prefix="/rag",
-    tags=['rag','question with context']
+    tags=['rag']
 )
 appProps = MyUtils.load_properties("general")["app"]
 logger = logging.getLogger(appProps["logger"])

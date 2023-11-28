@@ -9,7 +9,7 @@ from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatB
 
 router = APIRouter(
     prefix="/qabot",
-    tags=['qa','question and answer']
+    tags=['qa']
 )
 appProps = MyUtils.load_properties("general")["app"]
 logger = logging.getLogger(appProps["logger"])

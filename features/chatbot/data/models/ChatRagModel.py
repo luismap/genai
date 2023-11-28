@@ -1,4 +1,5 @@
 
+from typing import List, Tuple
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -15,6 +16,7 @@ class ChatRagResponseModel(BaseModel):
     answer: str
     model_use: str
     question: str
+    chat_history: List[Tuple[str,str]] = []
 
 class ChatRagPayloadModel(ChatRagPayload):
     pass

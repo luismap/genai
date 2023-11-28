@@ -129,7 +129,7 @@ class Llama2DataSource(ChatBotDataSource):
         responses = zip(self._hf_pipeline(data),cbpms)
 
         for res,payload in responses:
-            response_history = self._generate_history(self._user_info[payload.user_id]["history"]) if payload.history == "true" else ""
+            response_history = self._generate_history(self._user_info[payload.user_id]["history"]) if payload.history else ""
             answer = res[0]["generated_text"]
             cbrm =  ChatBotReadModel(user_id=payload.user_id,
                                 question=payload.question,

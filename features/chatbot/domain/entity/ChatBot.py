@@ -12,4 +12,4 @@ class ChatBot(BaseModel):
 class ChatBotPayload(BaseModel):
     user_id: str
     question: str
-    history: str = ""
+    history: bool = False

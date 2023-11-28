@@ -14,6 +14,7 @@ class ChatBotResponseModel(BaseModel):
     answer: str
     model_use: str
     question: str
+    batch_history: str
 
 class ChatBotPayloadModel(ChatBotPayload):
     pass

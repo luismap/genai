@@ -3,12 +3,10 @@ from fastapi import Body, FastAPI
 import logging
 import logging.config
 import yaml
-from app.InteractiveChatAsyncbatch import batch_ask, batch_processing_loop, initialize_model
+from app.batch.InteractiveChatAsyncbatch import batch_processing_loop
+import app.batch.RagChatAsyncbatch as ragchat_ab
 from core.utils.MyUtils import MyUtils
-import concurrent
-import time
-
-from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotReadModel, ChatBotResponseModel
+from app.routes import qa, rag
 
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]
@@ -25,25 +23,23 @@ with open("logging.yaml", 'rt') as f:
 # Get an instance of the logger and use it to write a log!
 # Note: Do this AFTER the config is loaded above or it won't use the config.
 logger = logging.getLogger(appProps["logger"])
-logger.info("Initial log config in route post!")
-loop = asyncio.get_event_loop()
-logger.info("initializing processing loop")
-loop.create_task(batch_processing_loop(loop))
-logger.info("finished awaiting loop")
+logger.info("Initial log config in root!")
 
-pool_model = concurrent.futures.ProcessPoolExecutor(max_workers=1, initializer=initialize_model)
+logger.info("initializing processing loop")
+loop = asyncio.get_event_loop()
+
+logger.info("Starting chatbot batch processing")
+loop.create_task(batch_processing_loop(loop))
+
+logger.info("Starting ragchatbot processing")
+loop.create_task(ragchat_ab.batch_processing_loop(loop))
+
+logger.info("finished awaiting loop")
 
 @app.get("/")
 def read_root():
     if canlog: logger.info("root got call")
     return {"core": "fast api core setup"}
 
-@app.post("/ask_llm")
-async def ask_llm(model: ChatBotPayloadModel) -> ChatBotResponseModel:
-    start = time.time()
-    cbread = await batch_ask(model) #will return a serialized dict
-    #logger.info(f"type of returned object: {cbread.__dict__}")
-    cbresponse = ChatBotResponseModel(**cbread)
-    end = time.time() - start
-    logger.info(f"{cbresponse.question} took: {end} seconds")
-    return cbresponse
+app.include_router(qa.router)
+app.include_router(rag.router)

@@ -112,7 +112,7 @@ def chat(input_text):
         qbm = st.session_state.current_qbit_mode
 
     if history:
-        add_row_qa_log("rowsqa_logs",data.batch_history)
+        add_row_qa_log("rowsqa_logs",data.chat_history)
 
     add_row(data.answer,"rows")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
@@ -127,8 +127,9 @@ def chat_rag(input_text):
     question = input_text
     user_id = st.session_state.user_name
     history = st.session_state.rag_history
+    #print(f"rag history {history}")
     payload = ChatRagPayloadModel(user_id=user_id,question=question, history=history)
-
+    #print(payload.json())
     with st.spinner("asking llm"):
         start_time = time.time()
         r = requests.post(url+route, data=payload.json(), headers={'Content-Type': 'application/json'})
@@ -137,8 +138,9 @@ def chat_rag(input_text):
         model_use = data.model_use
         qbm = st.session_state.current_qbit_mode
 
+    #print(data)
     if history:
-        add_row_qa_log("rows_rag_log",data.batch_history)
+        add_row_qa_log("rows_rag_log",data.chat_history)
 
     add_row(data.answer,"rows_rag")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
@@ -196,6 +198,7 @@ def log(line: str, widget):
 
 user_id = st.sidebar.text_input("👤 username", value=st.session_state.user_name )
 st.session_state.user_name = user_id
+st.sidebar.divider()
 
 history = st.sidebar.checkbox('📚 Show QA History',st.session_state.qa_history)
 st.session_state.qa_history = history
@@ -204,12 +207,23 @@ clear_qa_history = st.sidebar.button('📝 Clear QA History')
 
 st.sidebar.divider()
 
+rag_history = st.sidebar.checkbox('📚 Show RAG History',st.session_state.rag_history)
+st.session_state.rag_history = rag_history
+
+clear_rag_history = st.sidebar.button('📝 Clear RAG History')
+
+
 if clear_qa_history:
     user_id = st.session_state.user_name
     route = f"qabot/clean-user-context?user_id={user_id}"
     r = requests.post(url+route)
     st.warning(f"Cleaned context for {user_id} = {r.json()}")
 
+if clear_rag_history:
+    user_id = st.session_state.user_name
+    route = f"rag/clean-user-context?user_id={user_id}"
+    r = requests.post(url+route)
+    st.warning(f"Cleaned context for {user_id} = {r.json()}")
 
 def get_memory():
     raise Exception("to be implemented")
@@ -228,9 +242,9 @@ with col1_chat.form('chat'):
         row_data = generate_row_chat(data, chat_content)
         rows_collection_chat.append(row_data)
     
-    data = st.session_state.rowsqa_logs
-    row_data = generate_row_chat(data, qa_history)
-    rows_collection_chat_logs.append(row_data)
+    if st.session_state.qa_history:
+        data = st.session_state.rowsqa_logs
+        row_data = generate_row_chat(data, qa_history)
 
 ### QA rag tab section
 #
@@ -245,8 +259,9 @@ with col2_chat_rag.form('chat_rag'):
         row_data = generate_row_chat(data, chat_rag_content)
         rows_collection_chat_rag.append(row_data)
 
-    data = st.session_state.rows_rag_log
-    row_data = generate_row_chat(data, rag_history_tab)
+    if st.session_state.rag_history:
+        data = st.session_state.rows_rag_log
+        row_data = generate_row_chat(data, rag_history_tab)
 
 
 ### VECTORS section

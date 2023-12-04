@@ -36,8 +36,18 @@ class RagLlama2DataSource(RagChatBotDataSource):
         self._l2hf = l2hf
         self._llm_model = llm_model
         self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline)
+        chatchain_prompt_template = """<s>[INST]<<SYS>>
+You are a helpful agent.You will be given a context with information about different topics.
+Please answer the questions using that context. If you do not know the answer, do not make up the answers.
+<</SYS>>
+
+# Current conversation:
+# {history}
+# Human: {input} [/INST]
+"""
+
         self._basic_prompt = PromptTemplate.from_template(Llama2Prompt.prompt_template)
-        self._chatchain_prompt = PromptTemplate.from_template(Llama2Prompt.chatchain_prompt_template)
+        self._chatchain_prompt = PromptTemplate.from_template(chatchain_prompt_template)
 
         #for rag
         

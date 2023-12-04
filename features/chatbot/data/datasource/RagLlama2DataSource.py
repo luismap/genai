@@ -45,8 +45,13 @@ Please answer the questions using that context. If you do not know the answer, d
 # {history}
 # Human: {input} [/INST]
 """
-
-        self._basic_prompt = PromptTemplate.from_template(Llama2Prompt.prompt_template)
+        prompt_template ="""<s>[INST]<<SYS>>
+You are a helpful agent.You will be given a context with information about different topics.
+Please answer the questions using that context. If you do not know the answer, do not make up the answers.
+<</SYS>>
+{user_message} [/INST]
+""" 
+        self._basic_prompt = PromptTemplate.from_template(prompt_template)
         self._chatchain_prompt = PromptTemplate.from_template(chatchain_prompt_template)
 
         #for rag

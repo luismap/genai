@@ -23,7 +23,7 @@ queue: asyncio.Queue = None
 global_loop: asyncio.AbstractEventLoop = None
 model = ""
 max_batch_size = 9
-wait_time = 6.0
+wait_time = 3.0
 
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]

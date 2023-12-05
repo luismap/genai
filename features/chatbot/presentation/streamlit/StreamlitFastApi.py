@@ -280,7 +280,7 @@ uploader = col_upload.file_uploader("choose text file(s) to upload", accept_mult
 
 for uploaded_file in uploader:
     filename = uploaded_file.name
-    trgt_path = f"tmp-data/text/{filename}"
+    trgt_path = f"uploaded-data/text/{filename}"
     with open(trgt_path, "wb") as file:
         file.write(uploaded_file.getbuffer())
     info = vector_tab.info(f"file {filename} uploaded")
@@ -302,7 +302,7 @@ with audio_tab_right.form("audio-uploader-form", clear_on_submit=True):
     if submitted and audio_uploader is not None:
         for uploaded_file in audio_uploader:
             filename = uploaded_file.name
-            trgt_path = Path(f"tmp-data/audio/{filename}")
+            trgt_path = Path(f"uploaded-data/audio/{filename}")
             error_text = color_text("red", "ERROR")
             if trgt_path.suffix not in (".wav",".flac",".mp3"):
                 add_row(f":red[ERROR] - :file {filename} is no a supported format","rows_audio_log")

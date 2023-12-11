@@ -46,15 +46,23 @@ class WhisperDataSource(AudioDataSource):
                 response.append(adrm)
         return response
 
-    def translate(self, audio_file, src_language: str = "english") -> AudioDataReadModel:
-        generate_kwargs={"language": src_language
+    def translate(self,audio_payloads: List[AudioDataPayloadModel]) -> AudioDataReadModel:
+        grouped_by_language = self._group_by_language(audio_payloads)
+        response = []
+        for data in grouped_by_language:
+            src_language = data[0].language
+            audio_sources = [apm.audio_path for apm in data]
+
+            generate_kwargs={"language": src_language
                          ,"task": "translate"}
-        translation = self._audio_pipeline(audio_file
+            translated = self._audio_pipeline(audio_sources
                                            ,generate_kwargs=generate_kwargs)
-        adrm = AudioDataReadModel(
-            model=self._model_id
-            ,source_audio=audio_file
-            ,text=translation["text"]
-            ,chunks=translation["chunks"]
-        )
+            for apm,translated_data in zip(data,translated):
+                adrm = AudioDataReadModel(
+                    model=self._model_id
+                    ,source_audio=apm.audio_path
+                    ,text=translated_data["text"]
+                    ,chunks=translated_data["chunks"]
+                )
+                response.append(adrm)
         return adrm

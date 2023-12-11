@@ -11,7 +11,7 @@ class AudioDataSource(ABC):
         pass
 
     @abstractmethod
-    def transcribe(audio_file, src_language: str) -> AudioDataReadModel:
+    def transcribe(audio_payloads: List[AudioDataPayloadModel]) -> AudioDataReadModel:
         pass
 
     @abstractmethod

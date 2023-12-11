@@ -4,7 +4,7 @@ import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.AudioDataSource import AudioDataSource
-from features.chatbot.data.models.AudioDataModel import AudioDataReadModel
+from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel
 from features.chatbot.domain.controller.AudioControllerABC import AudioControllerABC
 
 
@@ -19,10 +19,10 @@ class AudioController(AudioControllerABC):
         self._logger.info(f" audio controller initialized - {self._audio_ds._model_id}")
         return None
     
-    def transcribe(self, audio_file: str, src_language: str) -> AudioDataReadModel:
-        adrm = self._audio_ds.transcribe(audio_file, src_language)
+    def transcribe(self, audio_payload_models: List[AudioDataPayloadModel]) -> List[AudioDataReadModel]:
+        adrm = self._audio_ds.transcribe(audio_payload_models)
         return adrm
     
-    def translate(self, audio_file: str, src_language: str) -> AudioDataReadModel:
-        adrm = self._audio_ds.translate(audio_file, src_language)
+    def translate(self, audio_payload_models: List[AudioDataPayloadModel]) -> List[AudioDataReadModel]:
+        adrm = self._audio_ds.translate(audio_payload_models)
         return adrm

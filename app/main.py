@@ -6,7 +6,7 @@ import yaml
 from app.batch.InteractiveChatAsyncbatch import batch_processing_loop
 import app.batch.RagChatAsyncbatch as ragchat_ab
 from core.utils.MyUtils import MyUtils
-from app.routes import qa, rag
+from app.routes import qa, rag, audio
 
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]
@@ -43,3 +43,4 @@ def read_root():
 
 app.include_router(qa.router)
 app.include_router(rag.router)
+app.include_router(audio.router)

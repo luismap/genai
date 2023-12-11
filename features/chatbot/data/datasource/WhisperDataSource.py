@@ -65,4 +65,4 @@ class WhisperDataSource(AudioDataSource):
                     ,chunks=translated_data["chunks"]
                 )
                 response.append(adrm)
-        return adrm
+        return response

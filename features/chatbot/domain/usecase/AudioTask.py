@@ -1,6 +1,7 @@
 
+from typing import List
 from features.chatbot.data.controller.AudioController import AudioController
-from features.chatbot.data.models.AudioDataModel import AudioDataReadModel
+from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel
 
 
 class AudioTask:
@@ -8,10 +9,10 @@ class AudioTask:
                  ,audio_ctr: AudioController) -> None:
         self._audio_ctr = audio_ctr
 
-    def transcribe(self, audio_file: str, src_language: str = "english") -> AudioDataReadModel:
-        adrm = self._audio_ctr.transcribe(audio_file, src_language)
+    def transcribe(self, audio_payload_models: List[AudioDataPayloadModel]) -> List[AudioDataReadModel]:
+        adrm = self._audio_ctr.transcribe(audio_payload_models)
         return adrm
     
-    def translate(self, audio_file: str, src_language: str = "english") -> AudioDataReadModel:
-        adrm = self._audio_ctr.translate(audio_file, src_language)
+    def translate(self, audio_payload_models: List[AudioDataPayloadModel]) -> List[AudioDataReadModel]:
+        adrm = self._audio_ctr.translate(audio_payload_models)
         return adrm

@@ -10,6 +10,7 @@ class AudioDataReadModel(AudioData):
     date_read: str = str(datetime.now())
 
 class AudioDataResponseModel(AudioData):
+    task: str
     pass
 
 class AudioDataPayloadModel(AudioDataPayload):

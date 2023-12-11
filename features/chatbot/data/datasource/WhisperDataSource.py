@@ -33,13 +33,13 @@ class WhisperDataSource(AudioDataSource):
         response = []
         for data in grouped_by_language:
             language = data[0].language
-            audio_sources = [apm.audio_path for apm in data]
+            audio_sources = [apm.source_audio for apm in data]
             transcribed = self._audio_pipeline(audio_sources
                                            ,generate_kwargs={"language": language})
             for apm,transcribed_data in zip(data,transcribed):
                 adrm = AudioDataReadModel(
                     model=self._model_id
-                    ,source_audio=apm.audio_path
+                    ,source_audio=apm.source_audio
                     ,text=transcribed_data["text"]
                     ,chunks=transcribed_data["chunks"]
                     ,task='transcribe'
@@ -52,7 +52,7 @@ class WhisperDataSource(AudioDataSource):
         response = []
         for data in grouped_by_language:
             src_language = data[0].language
-            audio_sources = [apm.audio_path for apm in data]
+            audio_sources = [apm.source_audio for apm in data]
 
             generate_kwargs={"language": src_language
                          ,"task": "translate"}
@@ -61,7 +61,7 @@ class WhisperDataSource(AudioDataSource):
             for apm,translated_data in zip(data,translated):
                 adrm = AudioDataReadModel(
                     model=self._model_id
-                    ,source_audio=apm.audio_path
+                    ,source_audio=apm.source_audio
                     ,text=translated_data["text"]
                     ,chunks=translated_data["chunks"]
                     ,task='translate'

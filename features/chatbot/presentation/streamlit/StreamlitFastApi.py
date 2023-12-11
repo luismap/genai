@@ -59,7 +59,9 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-url = 'https://public-wqecsl3xwlw5pvlu.ml-f17bb0ed-6df.ps-sandb.a465-9q4k.cloudera.site/'
+qa_url = 'https://public-wqecsl3xwlw5pvlu.ml-f17bb0ed-6df.ps-sandb.a465-9q4k.cloudera.site/'
+rag_url = ''
+audio_url = ''
 
 #page configs
 st.set_page_config(layout="wide")
@@ -104,7 +106,7 @@ def chat(input_text):
     
     with st.spinner("asking llm"):
         start_time = time.time()
-        r = requests.post(url+route, data=payload.json(), headers={'Content-Type': 'application/json'})
+        r = requests.post(qa_url+route, data=payload.json(), headers={'Content-Type': 'application/json'})
         inference_time = time.time() - start_time
         data = ChatBotReadModel.parse_raw(json.dumps(r.json()))
         model_use = data.model_use
@@ -132,7 +134,7 @@ def chat_rag(input_text):
     #print(payload.json())
     with st.spinner("asking llm"):
         start_time = time.time()
-        r = requests.post(url+route, data=payload.json(), headers={'Content-Type': 'application/json'})
+        r = requests.post(rag_url+route, data=payload.json(), headers={'Content-Type': 'application/json'})
         inference_time = time.time() - start_time
         data =  ChatRagResponseModel.parse_raw(json.dumps(r.json()))
         model_use = data.model_use
@@ -149,7 +151,7 @@ def chat_rag(input_text):
 def generate_web_button(urls):
     route = 'rag/web-url-src-upload'    
     with st.spinner("generating content from the passed urls"):
-        r = requests.post(url+route, data=json.dumps(urls), headers={'Content-Type': 'application/json'})
+        r = requests.post(rag_url+route, data=json.dumps(urls), headers={'Content-Type': 'application/json'})
     
     info = vector_tab.info(f"content added = {r.json()}")
     time.sleep(1)
@@ -170,8 +172,9 @@ def vector_load_from_web(content: str):
 
 def vector_load_from_file(filename: str):
     vector_tab.info(f"populating vector db with content from {filename}")
-    st.session_state.ic.load_text_from_local(filename)
-    return None
+    route = f"rag/document-upload?path={filename}"
+    r = requests.post(rag_url+route)  
+    return r.json()
 
 def transcribe(file: Path):
     with st.spinner(f"transcribing file {file.name}"):
@@ -216,13 +219,13 @@ clear_rag_history = st.sidebar.button('📝 Clear RAG History')
 if clear_qa_history:
     user_id = st.session_state.user_name
     route = f"qabot/clean-user-context?user_id={user_id}"
-    r = requests.post(url+route)
+    r = requests.post(qa_url+route)
     st.warning(f"Cleaned context for {user_id} = {r.json()}")
 
 if clear_rag_history:
     user_id = st.session_state.user_name
     route = f"rag/clean-user-context?user_id={user_id}"
-    r = requests.post(url+route)
+    r = requests.post(rag_url+route)
     st.warning(f"Cleaned context for {user_id} = {r.json()}")
 
 def get_memory():

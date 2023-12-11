@@ -32,9 +32,11 @@ class WhisperDataSource(AudioDataSource):
         grouped_by_language = self._group_by_language(audio_payloads)
         response = []
         for data in grouped_by_language:
-            transcribe = self._audio_pipeline(data
-                                           ,generate_kwargs={"language": data[0].language})
-            for apm,transcribed_data in zip(data,transcribe):
+            language = data[0].language
+            audio_sources = [apm.audio_path for apm in data]
+            transcribed = self._audio_pipeline(audio_sources
+                                           ,generate_kwargs={"language": language})
+            for apm,transcribed_data in zip(data,transcribed):
                 adrm = AudioDataReadModel(
                     model=self._model_id
                     ,source_audio=apm.audio_path

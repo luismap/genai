@@ -6,6 +6,7 @@ class AudioDataModel(AudioData):
     date_created: str = str(datetime.now())
 
 class AudioDataReadModel(AudioData):
+    task: str
     date_read: str = str(datetime.now())
 
 class AudioDataResponseModel(AudioData):

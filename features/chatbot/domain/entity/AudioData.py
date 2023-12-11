@@ -9,7 +9,9 @@ class AudioData(BaseModel):
     source_audio: str
     text: str
     chunks: List[dict]
+    task: str
 
 class AudioDataPayload(BaseModel):
+    task: str = "transcribe" #supporte transcribe, translate
     audio_path: str
     language: str = 'english'

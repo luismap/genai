@@ -43,6 +43,7 @@ class WhisperDataSource(AudioDataSource):
                     ,text=transcribed_data["text"]
                     ,chunks=transcribed_data["chunks"]
                     ,task='transcribe'
+                    ,source_language=language
                 )
                 response.append(adrm)
         return response
@@ -65,6 +66,7 @@ class WhisperDataSource(AudioDataSource):
                     ,text=translated_data["text"]
                     ,chunks=translated_data["chunks"]
                     ,task='translate'
+                    ,source_language=src_language
                 )
                 response.append(adrm)
         return response

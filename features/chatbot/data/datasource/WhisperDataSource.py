@@ -18,7 +18,7 @@ class WhisperDataSource(AudioDataSource):
     def is_available() -> bool:
         return True
     
-    def _group_by_language(audio_payloads: List[AudioDataPayloadModel]
+    def _group_by_language(self, audio_payloads: List[AudioDataPayloadModel]
                            ) -> List[List[AudioDataPayloadModel]]:
         keyfunc = lambda audio_payload_model: audio_payload_model.language
         grouped = []

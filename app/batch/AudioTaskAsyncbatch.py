@@ -64,7 +64,7 @@ def process_batch(batch: List[Tuple[Awaitable[AudioDataReadModel], AudioDataPayl
 	task_batch = group_by_task(batch)
 
 	for task_group in task_batch:
-		task_type = task_group[0].task
+		task_type = task_group[0][0].task
 		jobs_future, adpms = zip(*task_group)
 
 		logger.info(f"object before asking llm: {type(adpms)}")

@@ -1,12 +1,13 @@
 
 from abc import ABC, abstractmethod
+from typing import List
 
-from features.chatbot.data.models.AudioDataModel import AudioDataReadModel
+from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel
 
 
 class AudioDataSource(ABC):
     @abstractmethod
-    def translate(audio_file, src_language: str) -> AudioDataReadModel:
+    def translate(audio_payloads: List[AudioDataPayloadModel] ) -> List[AudioDataReadModel]:
         pass
 
     @abstractmethod

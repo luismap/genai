@@ -3,8 +3,10 @@ from fastapi import Body, FastAPI
 import logging
 import logging.config
 import yaml
-from app.batch.InteractiveChatAsyncbatch import batch_processing_loop
+import app.batch.InteractiveChatAsyncbatch as ichat_ab
 import app.batch.RagChatAsyncbatch as ragchat_ab
+import app.batch.AudioTaskAsyncbatch as audio_ab
+
 from core.utils.MyUtils import MyUtils
 from app.routes import qa, rag, audio
 
@@ -29,10 +31,13 @@ logger.info("initializing processing loop")
 loop = asyncio.get_event_loop()
 
 logger.info("Starting chatbot batch processing")
-loop.create_task(batch_processing_loop(loop))
+loop.create_task(ichat_ab.batch_processing_loop(loop))
 
 logger.info("Starting ragchatbot processing")
 loop.create_task(ragchat_ab.batch_processing_loop(loop))
+
+logger.info("Starting audio processing")
+loop.create_task(audio_ab.batch_processing_loop(loop))
 
 logger.info("finished awaiting loop")
 

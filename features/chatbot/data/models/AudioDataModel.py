@@ -1,5 +1,5 @@
 from datetime import datetime
-from features.chatbot.domain.entity.AudioData import AudioData
+from features.chatbot.domain.entity.AudioData import AudioData, AudioDataPayload
 
 
 class AudioDataModel(AudioData):
@@ -9,4 +9,7 @@ class AudioDataReadModel(AudioData):
     date_read: str = str(datetime.now())
 
 class AudioDataResponseModel(AudioData):
+    pass
+
+class AudioDataPayloadModel(AudioDataPayload):
     pass

@@ -9,3 +9,7 @@ class AudioData(BaseModel):
     source_audio: str
     text: str
     chunks: List[dict]
+
+class AudioDataPayload(BaseModel):
+    audio_path: str
+    language: str = 'english'

@@ -72,7 +72,7 @@ def process_batch(batch: List[Tuple[Awaitable[AudioDataReadModel], AudioDataPayl
 		if task_type == 'transcribe':
 			response = audio_task.transcribe(adpms)
 		elif task_type == 'translate':
-			response = audio_task.transcribe(adpms)
+			response = audio_task.translate(adpms)
 
 		for idx in range(len(response)):
 			logger.info(f"object before sending future: {type(response[idx])}")

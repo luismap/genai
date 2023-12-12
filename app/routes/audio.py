@@ -21,3 +21,12 @@ async def translate(audio_payload: AudioDataPayloadModel) -> AudioDataResponseMo
     end = time.time() - start
     logger.info(f"{adrm.task} for file {adrm.source_audio} took: {end} seconds")
     return adrm
+
+@router.post("/transcribe")
+async def transcribe(audio_payload: AudioDataPayloadModel) -> AudioDataResponseModel:
+    start = time.time()
+    adread = await batch_ask(audio_payload)
+    adrm = AudioDataResponseModel(**adread.dict())
+    end = time.time() - start
+    logger.info(f"{adrm.task} for file {adrm.source_audio} took: {end} seconds")
+    return adrm

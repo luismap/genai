@@ -6,7 +6,7 @@ from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatB
 from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, ChatRagReadModel, ChatRagResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 from features.chatbot.domain.usecase.AudioTask import AudioTask
-from features.chatbot.data.models.AudioDataModel import AudioDataReadModel
+from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel
 import requests
 import datetime
 import time
@@ -51,6 +51,10 @@ if "qa_history" not in st.session_state:
     st.session_state.qa_history = False
 if "rag_history" not in st.session_state:
     st.session_state.rag_history = False
+if "urls_list" not in st.session_state:
+    st.session_state.urls_list = False
+if "is_web_upload" not in st.session_state:
+    st.session_state.is_web_upload = False
 
 rows_collection_chat = []
 rows_collection_chat_logs = []
@@ -59,9 +63,9 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-qa_url = 'https://public-wqecsl3xwlw5pvlu.ml-f17bb0ed-6df.ps-sandb.a465-9q4k.cloudera.site/'
-rag_url = ''
-audio_url = ''
+qa_url = 'https://public-3i3igoyfvc3qqxaj.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+rag_url = 'https://public-576l4vtmezx605ej.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+audio_url = 'https://public-r1jrx9qej3ecehio.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
 
 #page configs
 st.set_page_config(layout="wide")
@@ -150,12 +154,9 @@ def chat_rag(input_text):
 
 def generate_web_button(urls):
     route = 'rag/web-url-src-upload'    
-    with st.spinner("generating content from the passed urls"):
-        r = requests.post(rag_url+route, data=json.dumps(urls), headers={'Content-Type': 'application/json'})
     
-    info = vector_tab.info(f"content added = {r.json()}")
-    time.sleep(1)
-    info.empty()
+    r = requests.post(rag_url+route, data=json.dumps(urls), headers={'Content-Type': 'application/json'})
+    
 
 def vector_load_from_web(content: str):
     urls = content.strip()
@@ -166,8 +167,7 @@ def vector_load_from_web(content: str):
     vector_tab.dataframe(data, 
                           column_config= {"url": st.column_config.LinkColumn(" 🔗 Links Parsed")}
                           ,hide_index=True)
-    
-    vector_tab.button("Send", type="primary" ,on_click=generate_web_button,args=(urls_list,))
+    vector_tab.button("Send", type="primary" ,on_click=generate_web_button,args=(urls_list,), key="url_send")
     vector_tab.button("Cancel", type="secondary")
 
 def vector_load_from_file(filename: str):
@@ -176,11 +176,19 @@ def vector_load_from_file(filename: str):
     r = requests.post(rag_url+route)  
     return r.json()
 
-def transcribe(file: Path):
+def transcribe(file: Path, language: str):
+    full_name = str(file.absolute())
+    payload = AudioDataPayloadModel(source_audio=full_name, 
+                                    language=language,
+                                    task="transcribe")
+    route = "audio/transcribe"
     with st.spinner(f"transcribing file {file.name}"):
         start = time.time()
-        data: AudioDataReadModel = st.session_state.audio_task.transcribe(file.as_posix())
+        data: AudioDataReadModel = requests.post(audio_url+route, 
+                                                 data=payload.json(),
+                                                 headers={'Content-Type': 'application/json'})
         inference_time = time.time() - start
+
     add_row(data.text,"rows_audio")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - audio model: `{data.model}` - file : `{file}`", "rows_audio")
     add_row("="*50, "rows_audio")
@@ -317,8 +325,11 @@ with audio_tab_right.form("audio-uploader-form", clear_on_submit=True):
 
             add_row(f"`INFO` - file {filename} uploaded", "rows_audio_log")
 
+input_col,_ = audio_tab_main.columns([0.2,0.8])
+language = input_col.text_input('🗣️ choose source language', value="english")
 
 checkbox_labels = {p for p in st.session_state.audio_files}
+task_labels = {'transcribe',''}
 option = audio_tab_main.selectbox(
     'Choose and audio file to be played',
     checkbox_labels)
@@ -331,7 +342,7 @@ if option != None:
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
 
-    audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path,))
+    audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path, language))
     audio_tab_main.button("Cancel", type="secondary")
 
     info.empty()

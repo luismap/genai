@@ -369,12 +369,6 @@ if option != None:
 
 if option != None:
     path = Path(option)
-    info = audio_tab_main.info(f"selected: {path.name}")
-
-    audio_file = open(option, 'rb')
-    audio_bytes = audio_file.read()
-    audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
-    #with st.spinner(f"transcribing file {file.name}"):
     audio_tab_main.button("Translate", type="primary" ,on_click=translate,args=(path, translate_language))
     audio_tab_main.button("Cancel", type="secondary")
 

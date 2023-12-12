@@ -6,7 +6,7 @@ from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatB
 from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, ChatRagReadModel, ChatRagResponseModel
 from features.chatbot.domain.usecase.InteractiveChat import InteractiveChat
 from features.chatbot.domain.usecase.AudioTask import AudioTask
-from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel
+from features.chatbot.data.models.AudioDataModel import AudioDataPayloadModel, AudioDataReadModel, AudioDataResponseModel
 import requests
 import datetime
 import time
@@ -63,9 +63,9 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-qa_url = 'https://public-3i3igoyfvc3qqxaj.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-rag_url = 'https://public-576l4vtmezx605ej.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-audio_url = 'https://public-r1jrx9qej3ecehio.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+qa_url = 'https://public-1bf4beb4a6taubdd.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+rag_url = 'https://public-67agq5by0c0i8fua.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+audio_url = 'https://public-6t327a3iudrcisqn.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
 
 #page configs
 st.set_page_config(layout="wide")
@@ -171,23 +171,25 @@ def vector_load_from_web(content: str):
     vector_tab.button("Cancel", type="secondary")
 
 def vector_load_from_file(filename: str):
-    vector_tab.info(f"populating vector db with content from {filename}")
+    info = vector_tab.info(f"populating vector db with content from {filename}")
     route = f"rag/document-upload?path={filename}"
-    r = requests.post(rag_url+route)  
+    r = requests.post(rag_url+route)
+    info.empty() 
     return r.json()
 
 def transcribe(file: Path, language: str):
-    full_name = str(file.absolute())
+    full_name = str(file)
     payload = AudioDataPayloadModel(source_audio=full_name, 
                                     language=language,
                                     task="transcribe")
     route = "audio/transcribe"
-    with st.spinner(f"transcribing file {file.name}"):
-        start = time.time()
-        data: AudioDataReadModel = requests.post(audio_url+route, 
-                                                 data=payload.json(),
-                                                 headers={'Content-Type': 'application/json'})
-        inference_time = time.time() - start
+    start = time.time()
+    response  = requests.post(audio_url+route,
+                              data=payload.json(),
+                              headers={'Content-Type': 'application/json'})
+        #print(response.json())
+    data =  AudioDataResponseModel.parse_raw(json.dumps(response.json())) 
+    inference_time = time.time() - start
 
     add_row(data.text,"rows_audio")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - audio model: `{data.model}` - file : `{file}`", "rows_audio")
@@ -341,7 +343,7 @@ if option != None:
     audio_file = open(option, 'rb')
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
-
+    #with st.spinner(f"transcribing file {file.name}"):
     audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path, language))
     audio_tab_main.button("Cancel", type="secondary")
 

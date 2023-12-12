@@ -195,6 +195,24 @@ def transcribe(file: Path, language: str):
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - audio model: `{data.model}` - file : `{file}`", "rows_audio")
     add_row("="*50, "rows_audio")
 
+def translate(file: Path, language: str):
+    full_name = str(file)
+    payload = AudioDataPayloadModel(source_audio=full_name,
+                                    language=language,
+                                    task="translate")
+    route = "audio/translate"
+    start = time.time()
+    response  = requests.post(audio_url+route,
+                              data=payload.json(),
+                              headers={'Content-Type': 'application/json'})
+        #print(response.json())
+    data =  AudioDataResponseModel.parse_raw(json.dumps(response.json()))
+    inference_time = time.time() - start
+
+    add_row(data.text,"rows_audio")
+    add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - audio model: `{data.model}` - file : `{file}`", "rows_audio")
+    add_row("="*50, "rows_audio")
+
 def log(line: str, widget):
     widget.write(line)
 
@@ -345,6 +363,18 @@ if option != None:
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
     #with st.spinner(f"transcribing file {file.name}"):
     audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path, language))
+    #audio_tab_main.button("Cancel", type="secondary")
+    info.empty()
+
+if option != None:
+    path = Path(option)
+    info = audio_tab_main.info(f"selected: {path.name}")
+
+    audio_file = open(option, 'rb')
+    audio_bytes = audio_file.read()
+    audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
+    #with st.spinner(f"transcribing file {file.name}"):
+    audio_tab_main.button("Translate", type="primary" ,on_click=translate,args=(path, language))
     audio_tab_main.button("Cancel", type="secondary")
 
     info.empty()

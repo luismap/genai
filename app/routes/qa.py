@@ -1,7 +1,8 @@
 
+import asyncio
 import time
 from fastapi import APIRouter
-from app.batch.InteractiveChatAsyncbatch import batch_ask, ic
+from app.batch.InteractiveChatAsyncbatch import batch_ask, ic, batch_processing_loop
 import logging
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotResponseModel
@@ -13,6 +14,12 @@ router = APIRouter(
 appProps = MyUtils.load_properties("general")["app"]
 logger = logging.getLogger(appProps["logger"])
 
+
+logger.info("initializing processing loop")
+loop = asyncio.get_event_loop()
+
+logger.info("Starting chatbot batch processing")
+loop.create_task(batch_processing_loop(loop))
 
 
 @router.post("/ask")

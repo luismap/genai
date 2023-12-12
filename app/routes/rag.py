@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from typing import List
@@ -5,7 +6,7 @@ from fastapi import APIRouter
 
 from core.utils.MyUtils import MyUtils
 from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, ChatRagResponseModel
-from app.batch.RagChatAsyncbatch import batch_ask, rag_uc
+from app.batch.RagChatAsyncbatch import batch_ask, rag_uc, batch_processing_loop
 
 router = APIRouter(
     prefix="/rag",
@@ -14,7 +15,11 @@ router = APIRouter(
 appProps = MyUtils.load_properties("general")["app"]
 logger = logging.getLogger(appProps["logger"])
 
+logger.info("initializing processing loop")
+loop = asyncio.get_event_loop()
 
+logger.info("Starting ragchatbot processing")
+loop.create_task(batch_processing_loop(loop))
 
 @router.post("/ask-rag")
 async def ask_llm(model: ChatRagPayloadModel) -> ChatRagResponseModel:

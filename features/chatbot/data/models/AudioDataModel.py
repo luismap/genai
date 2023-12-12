@@ -13,6 +13,7 @@ class AudioDataReadModel(AudioData):
 class AudioDataResponseModel(AudioData):
     task: str
     source_language: str
+    model: str
     pass
 
 class AudioDataPayloadModel(AudioDataPayload):

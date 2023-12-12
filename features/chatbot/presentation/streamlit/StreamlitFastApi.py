@@ -345,8 +345,9 @@ with audio_tab_right.form("audio-uploader-form", clear_on_submit=True):
 
             add_row(f"`INFO` - file {filename} uploaded", "rows_audio_log")
 
-input_col,_ = audio_tab_main.columns([0.2,0.8])
-language = input_col.text_input('🗣️ choose source language', value="english")
+src_lang_col,translate_lang_col,_ = audio_tab_main.columns([0.2,0.2,0.6])
+language = src_lang_col.text_input('🗣️ choose audio language', value="english")
+translate_language = translate_lang_col.text_input('🗣️ choose translate language', value="english")
 
 checkbox_labels = {p for p in st.session_state.audio_files}
 task_labels = {'transcribe',''}
@@ -374,7 +375,7 @@ if option != None:
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
     #with st.spinner(f"transcribing file {file.name}"):
-    audio_tab_main.button("Translate", type="primary" ,on_click=translate,args=(path, language))
+    audio_tab_main.button("Translate", type="primary" ,on_click=translate,args=(path, translate_language))
     audio_tab_main.button("Cancel", type="secondary")
 
     info.empty()

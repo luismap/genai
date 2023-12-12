@@ -13,4 +13,4 @@ class AudioData(BaseModel):
 class AudioDataPayload(BaseModel):
     task: str = "transcribe" #supporte transcribe, translate
     source_audio: str
-    language: str = 'english'
+    language: str

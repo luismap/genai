@@ -63,9 +63,9 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-qa_url = 'https://public-1bf4beb4a6taubdd.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-rag_url = 'https://public-67agq5by0c0i8fua.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-audio_url = 'https://public-6t327a3iudrcisqn.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+qa_url = 'https://public-d61kxdsqu1fw4phr.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+rag_url = 'https://public-orc5e8yk7368758s.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+audio_url = 'https://public-pnfo5ho1svxc8l3i.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
 
 #page configs
 st.set_page_config(layout="wide")
@@ -118,7 +118,7 @@ def chat(input_text):
         qbm = st.session_state.current_qbit_mode
 
     if history:
-        add_row_qa_log("rowsqa_logs",data.chat_history)
+        add_row_qa_log("rowsqa_logs",data.batch_history)
 
     add_row(data.answer,"rows")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
@@ -168,7 +168,7 @@ def vector_load_from_web(content: str):
                           column_config= {"url": st.column_config.LinkColumn(" 🔗 Links Parsed")}
                           ,hide_index=True)
     vector_tab.button("Send", type="primary" ,on_click=generate_web_button,args=(urls_list,), key="url_send")
-    vector_tab.button("Cancel", type="secondary")
+    vector_tab.button("Cancel", type="secondary", key="vector_cancel")
 
 def vector_load_from_file(filename: str):
     info = vector_tab.info(f"populating vector db with content from {filename}")
@@ -354,6 +354,7 @@ task_labels = {'transcribe',''}
 option = audio_tab_main.selectbox(
     'Choose and audio file to be played',
     checkbox_labels)
+transcribe_col_bc, translate_bc, cancel_bc,_ = audio_tab_main.columns([0.2,0.2,0.2,0.6])
 
 if option != None:
     path = Path(option)
@@ -363,15 +364,15 @@ if option != None:
     audio_bytes = audio_file.read()
     audio_tab_main.audio(audio_bytes, format=f"audio/{path.suffix}")
     #with st.spinner(f"transcribing file {file.name}"):
-    audio_tab_main.button("Transcribe", type="primary" ,on_click=transcribe,args=(path, language))
+    text = 'Transcribe'
+    transcribe_col_bc.button(f"{text: ^12}", type="primary" ,on_click=transcribe,args=(path, language))
     #audio_tab_main.button("Cancel", type="secondary")
     info.empty()
 
 if option != None:
     path = Path(option)
-    audio_tab_main.button("Translate", type="primary" ,on_click=translate,args=(path, translate_language))
-    audio_tab_main.button("Cancel", type="secondary")
-
+    text = 'Translate'
+    translate_bc.button(f"{text: ^12}", type="primary" ,on_click=translate,args=(path, translate_language))
     info.empty()
 
 for data in st.session_state["rows_audio"][::-1]:

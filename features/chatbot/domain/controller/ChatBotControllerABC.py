@@ -24,3 +24,7 @@ class ChatBotControllerABC(ABC):
     @abstractmethod
     def clean_context(user_id: str) -> bool:
         pass
+
+    @abstractmethod
+    def get_context_length(user_id: str) -> int:
+        pass

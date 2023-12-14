@@ -32,3 +32,10 @@ class ChatBotController(ChatBotControllerABC):
 
     def clean_context(self, user_id) -> bool:
         return self._chat_datasource.clean_user_history(user_id)
+    
+    def get_context_length(self, user_id: str) -> int:
+        if user_id in self._chat_datasource._users:
+            context_length = self._chat_datasource._generate_history(self._user_info[user_id]["history"])
+        else:
+            context_length = 0
+        return context_length

@@ -16,3 +16,6 @@ class InteractiveChat:
 
     def clean_context(self, user_id: str) -> bool:
         return self._chatbot_ctr.clean_context(user_id)
+    
+    def get_context_length(self, user_id: str) -> int:
+        return self._chatbot_ctr.get_context_length(user_id=user_id)

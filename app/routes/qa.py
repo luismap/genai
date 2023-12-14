@@ -35,3 +35,7 @@ async def ask_llm(model: ChatBotPayloadModel) -> ChatBotResponseModel:
 @router.post("/clean-user-context")
 def clean_context(user_id: str):
     return ic.clean_context(user_id)
+
+@router.post("/get-context-length")
+def get_context_length(user_id: str) -> int:
+    return ic.get_context_length(user_id)

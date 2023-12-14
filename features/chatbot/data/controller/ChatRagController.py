@@ -46,3 +46,13 @@ class ChatRagController(ChatRagControllerABC):
     def clean_context(self, user_id) -> bool:
         cleaned = self._chat_datasource.clean_user_history(user_id)
         return cleaned
+
+    def get_context_length(self, user_id: str) -> int:
+        parse_tuples = lambda t: t[0] + t[1]
+        if user_id in self._chat_datasource._users:
+            user_history = self._chat_datasource._user_info[user_id]["history"]
+            history = " ".join([parse_tuples(question_pair) for question_pair in user_history])
+            context_length = len(history)
+        else:
+            context_length = 0
+        return context_length

@@ -21,3 +21,7 @@ class ChatRagControllerABC(ABC):
     @abstractmethod
     def clean_context() -> bool:
         pass
+
+    @abstractmethod
+    def get_context_length(user_id: str) -> int:
+        pass

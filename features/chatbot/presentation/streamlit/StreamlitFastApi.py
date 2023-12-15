@@ -55,6 +55,10 @@ if "urls_list" not in st.session_state:
     st.session_state.urls_list = False
 if "is_web_upload" not in st.session_state:
     st.session_state.is_web_upload = False
+if "qa_context_length" not in st.session_state:
+    st.session_state.qa_context_length = 0
+if "rag_context_length" not in st.session_state:
+    st.session_state.rag_context_length = 0
 
 rows_collection_chat = []
 rows_collection_chat_logs = []
@@ -63,9 +67,9 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-qa_url = 'https://public-d61kxdsqu1fw4phr.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-rag_url = 'https://public-orc5e8yk7368758s.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-audio_url = 'https://public-pnfo5ho1svxc8l3i.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+qa_url = 'https://public-kodq4t2c9p7f4hzs.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+rag_url = 'https://public-7rdzpndfw9c8vjkk.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+audio_url = 'https://public-otaunhc8ckumijhz.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
 
 #page configs
 st.set_page_config(layout="wide")
@@ -120,6 +124,10 @@ def chat(input_text):
     if history:
         add_row_qa_log("rowsqa_logs",data.batch_history)
 
+    cl_route = f'qabot/get-context-length?user_id={user_id}'
+    new_context_length = requests.post(qa_url + cl_route).json()
+    st.session_state.qa_context_length = new_context_length
+
     add_row(data.answer,"rows")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows")
     add_row("="*50, "rows")
@@ -147,6 +155,10 @@ def chat_rag(input_text):
     #print(data)
     if history:
         add_row_qa_log("rows_rag_log",data.chat_history)
+
+    cl_route = f'rag/get-context-length?user_id={user_id}'
+    new_context_length = requests.post(rag_url + cl_route).json()
+    st.session_state.rag_context_length = new_context_length
 
     add_row(data.answer,"rows_rag")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
@@ -263,6 +275,12 @@ def get_memory():
 
 ### QA tab section
 #
+ctx_button, ctx_content = col1_chat.columns([0.4, 0.6])
+#using button call to trigger refresh
+get_context_button = ctx_button.button("🔤 get approximate context length", key='gcb_qa')
+
+ctx_content.write(f"current context length: :green[{st.session_state.qa_context_length}] tokens")
+
 with col1_chat.form('chat'):
     text = st.text_area('Ask me something:', 'give me a list of animals? be short')
     submitted = st.form_submit_button('Submit')
@@ -279,6 +297,11 @@ with col1_chat.form('chat'):
 
 ### QA rag tab section
 #
+ctx_button_rag, ctx_content_rag = col2_chat_rag.columns([0.4, 0.6])
+#using button call to trigger refresh
+get_context_button_rag = ctx_button_rag.button("🔤 get approximate context length",key='gcb_rag')
+
+ctx_content_rag.write(f"current context length: :green[{st.session_state.rag_context_length}] tokens")
 
 with col2_chat_rag.form('chat_rag'):
     text = st.text_area('RAG - Ask me something:', 'What is cloudera cml?')

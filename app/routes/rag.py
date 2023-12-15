@@ -47,6 +47,6 @@ def similarity_search(content: str):
 def clean_context(user_id: str):
     return rag_uc.clean_context(user_id)
 
-@router.post("/get-user-context")
+@router.post("/get-context-length")
 def get_context_length(user_id: str) -> int:
     return rag_uc.get_context_length(user_id=user_id)

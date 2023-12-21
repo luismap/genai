@@ -10,10 +10,10 @@ from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 
 class MyLlama2DsPrompt:
-     memory_prompt_template = """ <<SYS>> your are a good and helpful assistant. Help me with my questions. If you do not know the answer, please do not make up the answers.
+    memory_prompt_template = """<s>[INST] <<SYS>> your are a good and helpful assistant. Help me with my questions. If you do not know the answer, please do not make up the answers.
 <</SYS>>
 {history}
-[INST] {input} [/INST]
+ {input} [/INST]
 """
 
 class Llama2DataSource(ChatBotDataSource):
@@ -107,7 +107,7 @@ class Llama2DataSource(ChatBotDataSource):
         Returns:
             str: history formatted
         """
-        combined = [ "[INST] " + q + " [/INST]\n" + a for q,a in history]
+        combined = [ q + " [/INST] " + a + "</s><s>[INST]" for q,a in history]
         return "\n".join(combined)
     
     def chat(self, cbpms = List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:

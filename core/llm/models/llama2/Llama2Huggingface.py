@@ -146,8 +146,15 @@ class Llama2Hugginface:
         Returns:
             pipeline: huggingface pipeline
         """
+        tokenizer = self.tokenizer()
+        if tokenizer.pad_token is None:
+            print("updating tokenizer because of None")
+            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            model.resize_token_embeddings(len(tokenizer))
+            model.config.pad_token = tokenizer.pad_token
+
         pline =  pipeline(model=model, 
-                            tokenizer=self.tokenizer(),
+                            tokenizer=tokenizer,
                             return_full_text=full_text,  # langchain expects the full text
                             task=task,
                             #batch_size=batch_size,
@@ -155,7 +162,8 @@ class Llama2Hugginface:
                             temperature=temperature,  # 'randomness' of outputs, 0.0 is the min and 1.0 the max
                             max_new_tokens=max_new_tokens,  # max number of tokens to generate in the output
                             repetition_penalty=repetition_penalty,  # without this output begins repeating
-                            device_map=device
+                            device_map=device,
+                            eos_token_id=tokenizer.eos_token_id
         )
         return pline
     

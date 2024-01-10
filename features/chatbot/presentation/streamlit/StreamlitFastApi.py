@@ -13,6 +13,7 @@ import time
 import pandas as pd
 from pathlib import Path
 import uuid
+import os
 
 #create session state for rows
 if "rows" not in st.session_state:
@@ -67,9 +68,11 @@ rows_collection_audio = []
 rows_collection_audio_log = []
 
 #vars
-qa_url = 'https://public-kodq4t2c9p7f4hzs.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-rag_url = 'https://public-7rdzpndfw9c8vjkk.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
-audio_url = 'https://public-otaunhc8ckumijhz.ml-d546e9a6-a5b.se-sandb.a465-9q4k.cloudera.site/'
+domain = os.getenv("CDSW_DOMAIN")
+
+qa_url = f'https://qa.{domain}/'
+rag_url = f'https://rag.{domain}/'
+audio_url = f'https://audio.{domain}/'
 
 #page configs
 st.set_page_config(layout="wide")

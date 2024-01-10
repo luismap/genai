@@ -1,0 +1,1 @@
+!uvicorn --app-dir app main-audio:app --port $CDSW_APP_PORT

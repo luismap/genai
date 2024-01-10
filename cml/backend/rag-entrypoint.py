@@ -1,0 +1,1 @@
+!uvicorn --app-dir app main-rag:app --port $CDSW_APP_PORT

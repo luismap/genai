@@ -7,7 +7,7 @@ from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.chains import ConversationalRetrievalChain
 from langchain import PromptTemplate
-from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel
+from features.chatbot.data.models.ChatRagModel import ChatRagPayloadModel, SourceDocument
 
 from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
 
@@ -60,7 +60,7 @@ Please answer the questions using that context. If you do not know the answer, d
         self._conversational_rag_chain: ConversationalRetrievalChain = ConversationalRetrievalChain.from_llm(
               self._langchain_hf_pipeline,
               vector_db.retriever(),
-              return_source_documents=False,
+              return_source_documents=True,
               rephrase_question=False
         )
         chat_rag_history = []
@@ -131,11 +131,25 @@ Please answer the questions using that context. If you do not know the answer, d
             response_history = self._user_info[user.user_id]["history"]if user.history else []
             self._user_info[user.user_id]["history"].append((user.question,ans["answer"]))
 
+            source_docs = set()
+            for doc in ans['source_documents']:
+                try:
+                    title = doc.metadata["title"]
+                    source = doc.metadata["source"]
+                except KeyError:
+                    title = "llm brain"
+                    source = self._l2hf.model_id
+
+                source_docs.add((title,source))
+
+            source_docs = [ SourceDocument(title=title,source=source) for title, source in source_docs]
+
             cbrm = ChatRagReadModel(user_id=user.user_id,
                                     question=user.question,
                                     model_use=self._l2hf.model_id,
                                     answer=ans["answer"],
-                                    chat_history=response_history)
+                                    chat_history=response_history,
+                                    source_doc=source_docs)
             cbrms.append(cbrm)
 
         return cbrms

@@ -20,7 +20,7 @@ class ChatRagResponseModel(BaseModel):
     model_use: str
     question: str
     chat_history: List[Tuple[str,str]] = []
-    source_doc: SourceDocument
+    source_doc: List[SourceDocument]
 
 class ChatRagPayloadModel(ChatRagPayload):
     pass

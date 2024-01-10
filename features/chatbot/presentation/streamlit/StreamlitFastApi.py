@@ -339,7 +339,6 @@ for uploaded_file in uploader:
         file.write(uploaded_file.getbuffer())
     info = vector_tab.info(f"file {filename} uploaded")
     vector_load_from_file(trgt_path)
-    info.empty()
 
 
 

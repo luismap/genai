@@ -11,12 +11,16 @@ class ChatRagModel(ChatRag):
 class ChatRagReadModel(ChatRag):
     date_read: str = str(datetime.now())
 
+class SourceDocument(BaseModel):
+    source: str
+    title: str
 
 class ChatRagResponseModel(BaseModel):
     answer: str
     model_use: str
     question: str
     chat_history: List[Tuple[str,str]] = []
+    source_doc: SourceDocument
 
 class ChatRagPayloadModel(ChatRagPayload):
     pass

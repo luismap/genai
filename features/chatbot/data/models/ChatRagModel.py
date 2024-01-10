@@ -8,12 +8,13 @@ from features.chatbot.domain.entity.ChatRag import ChatRag, ChatRagPayload
 class ChatRagModel(ChatRag):
     date_created: str = str(datetime.now())
 
-class ChatRagReadModel(ChatRag):
-    date_read: str = str(datetime.now())
-
 class SourceDocument(BaseModel):
     source: str
     title: str
+
+class ChatRagReadModel(ChatRag):
+    date_read: str = str(datetime.now())
+    source_doc: List[SourceDocument]
 
 class ChatRagResponseModel(BaseModel):
     answer: str

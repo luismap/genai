@@ -135,9 +135,12 @@ Please answer the questions using that context. If you do not know the answer, d
             for doc in ans['source_documents']:
                 try:
                     title = doc.metadata["title"]
-                    source = doc.metadata["source"]
                 except KeyError:
                     title = "llm brain"
+                
+                try:
+                    source = doc.metadata["source"]
+                except KeyError:
                     source = self._l2hf.model_id
 
                 source_docs.add((title,source))

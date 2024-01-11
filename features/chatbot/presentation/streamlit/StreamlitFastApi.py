@@ -163,7 +163,12 @@ def chat_rag(input_text):
     new_context_length = requests.post(rag_url + cl_route).json()
     st.session_state.rag_context_length = new_context_length
 
-    add_row(data.answer,"rows_rag")
+    source_content = ["* " + str(doc) for doc in data.source_doc]
+    label = ":green[document sources used:]\n"
+
+    add_row("* " + data.answer,"rows_rag")
+    add_row(source_content, "rows_rag")
+    add_row(label, "rows_rag")
     add_row(f"`{datetime.datetime.now()}`- exec time: `{inference_time}s` - llm model: `{model_use}` - quatization bitmode: `{qbm}`", "rows_rag")
     add_row("="*50, "rows_rag")
 

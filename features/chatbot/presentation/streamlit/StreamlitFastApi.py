@@ -1,4 +1,5 @@
 import json
+from typing import List
 import streamlit as st
 from features.chatbot.data.controller.AudioController import AudioController
 from features.chatbot.data.datasource.WhisperDataSource import WhisperDataSource
@@ -60,6 +61,8 @@ if "qa_context_length" not in st.session_state:
     st.session_state.qa_context_length = 0
 if "rag_context_length" not in st.session_state:
     st.session_state.rag_context_length = 0
+if "vdb_simsearch_content" not in st.session_state:
+    st.session_state.vdb_simsearch_content = ""
 
 rows_collection_chat = []
 rows_collection_chat_logs = []
@@ -79,7 +82,7 @@ st.set_page_config(layout="wide")
 st.title('📱Gen - AI © PS labs')
 
 #initialized widgets
-qa_chat, qa_history, qa_rag, rag_history_tab, vector_tab, audio_tab = st.tabs(["📝 QA", "📚 QA History", "🎓 QA rag", "📚 Rag History" , "🧮 vectors", "🔈 audio"])
+qa_chat, qa_history, qa_rag, rag_history_tab, vector_tab, vdb_simsearch_tab, audio_tab = st.tabs(["📝 QA", "📚 QA History", "🎓 QA rag", "📚 Rag History" , "🧮 vectors", "🔍 similarity search", "🔈 audio"])
 username_chat, history_chat = qa_chat.columns(2)
 col1_chat = qa_chat.columns(1)[0]
 chat_content = qa_chat.columns(1)[0]
@@ -236,6 +239,17 @@ def translate(file: Path, language: str):
 def log(line: str, widget):
     widget.write(line)
 
+def vdb_simsearch(text: str):
+    route = f"rag/vdb-similarity-search?content={text}"
+    r = requests.post(rag_url + route)
+    content = r.json() #has a list of Documents
+    try:
+        parsed = [ f"page_content:{doc['page_content']}\n" + f"source:{doc['metadata']['source']}" for doc in content]
+        st.session_state.vdb_simsearch_content = parsed
+
+    except KeyError:
+        st.session_state.vdb_simsearch_content = "No content Found, please expand the search"
+
 ### MAIN section
 #
 #sider
@@ -349,7 +363,16 @@ for uploaded_file in uploader:
     vector_load_from_file(trgt_path)
 
 
+### VECTOR SIMILARITY SEARCH SECTION
+#
+vdb_sim_main = vdb_simsearch_tab.columns(1)[0]
+with vdb_sim_main.form("vdb-simsearch-form"):
+    text = st.text_area('Write question to ask to vector db:', "ask me something")
+    submitted = st.form_submit_button('Submit')
+    if submitted:
+        vdb_simsearch(text)
 
+generate_row_chat(st.session_state.vdb_simsearch_content, vdb_sim_main)
 
 ### AUDIO tab section
 #

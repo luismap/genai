@@ -327,7 +327,7 @@ ctx_content_rag.write(f"current context length: :green[{st.session_state.rag_con
 
 with col2_chat_rag.form('chat_rag'):
     text = st.text_area('RAG - Ask me something:', 'What is cloudera cml?')
-    submitted = st.form_submit_button('Submit')
+    submitted = st.form_submit_button('Parse')
     if submitted:
         chat_rag(text)
 

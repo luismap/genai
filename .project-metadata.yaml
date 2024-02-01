@@ -26,11 +26,6 @@ environment_variables:
       auth cookie default experiation time
           
 
-runtimes:
-  - editor: JupyterLab
-    kernel: Python 3.10
-    edition: Nvidia GPU	
-
 tasks:
   - type: run_session
     name: general gpu requirements

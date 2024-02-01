@@ -1,0 +1,1 @@
+!pip install -I requirements_sl.txt

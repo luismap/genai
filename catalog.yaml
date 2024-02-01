@@ -1,0 +1,23 @@
+name: Generative AI usecases
+
+entries:
+  - title: Generative AI usecases
+    label: genai-amp
+    short_description: |
+        Generative AI general usecases
+    long_description: |
+        General AI usecases that can be use to show the possibility of
+        doing advance solution using cloudera CML.
+    image_path: >-
+        https://raw.githubusercontent.com/luismap/genai/main/images/logo.png
+    tags:
+      - genai
+      - llm
+      - chatbot
+      - rag
+      - multimodal
+    
+    git_url: 'https://github.com/luismap/genai'
+    is_prototype: true
+    
+  

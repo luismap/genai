@@ -37,7 +37,7 @@ tasks:
     script: 01-install-deps/general_req.py
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
-    kernel: python3.10
+    kernel: Python 3.10 
     edition: Nvidia GPU
     cpu: 4
     memory: 16

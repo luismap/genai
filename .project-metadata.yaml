@@ -37,7 +37,6 @@ tasks:
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
     kernel: python3
-    edition: Nvidia GPU
     cpu: 4
     memory: 16
 

@@ -1,1 +1,1 @@
-!pip install -I requirements_sl.txt
+!pip install -I -r requirements_sl.txt

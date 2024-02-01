@@ -1,1 +1,1 @@
-!pip install requirements_langc.txt
+!pip install -r requirements_langc.txt

@@ -36,7 +36,7 @@ tasks:
     script: 01-install-deps/general_req.py
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
-    kernel: Python 3.10 
+    kernel: python3
     edition: Nvidia GPU
     cpu: 4
     memory: 16
@@ -46,8 +46,7 @@ tasks:
     script: 01-install-deps/langchain_req.py
     short_summary: install python dependencies
     long_summary: install python dependencies for langchain
-    kernel: Python 3.10 
-    edition: Nvidia GPU
+    kernel: python3 
     cpu: 2
     memory: 8
 
@@ -56,7 +55,6 @@ tasks:
     script: 01-install-deps/streamlit_req.py
     short_summary: install python dependencies
     long_summary: install python dependencies for streamlit
-    kernel: Python 3.10 
-    edition: Nvidia GPU
+    kernel: python3
     cpu: 2
     memory: 8

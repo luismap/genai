@@ -55,3 +55,17 @@ tasks:
     kernel: python3
     cpu: 1
     memory: 2
+
+  - type: start_application
+    name: rag backend
+    subdomain: rag
+    script: cml/backend/rag-entrypoint.py
+    short_summary: rag endpoint 
+    long_summary: start retrieval augmented generation endpoint
+    kernel: python3
+    cpu: 8
+    gpu: 1
+    memory: 16
+    bypass_authentication: true
+    environment_variables:
+      TASK_TYPE: START_APPLICATION

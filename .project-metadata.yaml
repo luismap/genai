@@ -1,56 +1,37 @@
-name: Generative AI usecases
+name: lineal-amp
 description: |
-  this is a test amp to see how to approach amp development
+  Demo amp to see how to approach amp development. It goes through the different
+  tools CML has to help Data teams to do MLOps.
 
-author: luis map
+author: luis
 specification_version: 1.0
 prototype_version: 1.0
-date: "2024-01-13"
+date: "2023-10-12"
 
 environment_variables:
-  hf_token:
-    default: "add me"
+  cml_api_key:
+    default: "cml api key"
     description: >-
-      provide your hugging face token to dowload gated models
-  secret_key:
-    default: "mysecretkey"
+      create an api key, that will be use to query the workspace for
+      information
+  project_name:
+    default: "choose the name from this project page"
     description: >-
-      the key will be use to generate auth cookies, un-implemented currently
-  secret_key:
-    default: "mysecretkey"
-    description: >-
-      the key will be use to generate auth cookies, un-implemented currently
-  access_token_expiration_minutes:
-    default: 30
-    description: >-
-      auth cookie default experiation time
+      project name of this deployment, it will get use to get the model
+      id and use it for the UI application
+ 
 
-
+runtimes:
+  - editor: Workbench
+    kernel: Python 3.9
+    edition: Standard
 
 tasks:
   - type: run_session
-    name: general gpu requirements
+    name: prepare enviroment
     script: 01-install-deps/general_req.py
-    short_summary: install python dependencies
-    long_summary: install gpu dependencies for python
-    kernel: python3
-    cpu: 1
-    memory: 2
-
-  - type: run_session
-    name: general langchain settings
-    script: 01-install-deps/langchain_req.py
-    short_summary: install python dependencies
-    long_summary: install python dependencies for langchain
-    kernel: python3 
-    cpu: 1
-    memory: 2
-
-  - type: run_session
-    name: general streamlit settings
-    script: 01-install-deps/streamlit_req.py
-    short_summary: install python dependencies
-    long_summary: install python dependencies for streamlit
+    short_summary: create project structure 
+    long_summary: creates project structures, and any prepare steps
     kernel: python3
     cpu: 1
     memory: 2

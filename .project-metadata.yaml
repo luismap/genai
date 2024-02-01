@@ -1,0 +1,61 @@
+name: Generative AI usecases
+description: |
+  this is a test amp to see how to approach amp development
+
+author: luis map
+specification_version: 1.0
+prototype_version: 1.0
+date: "2024-01-13"
+
+environment_variables:
+  hf_token:
+    default: "add me"
+    description: >-
+      provide your hugging face token to dowload gated models
+  secret_key:
+    default: "mysecretkey"
+    description: >-
+      the key will be use to generate auth cookies, un-implemented currently
+  secret_key:
+    default: "mysecretkey"
+    description: >-
+      the key will be use to generate auth cookies, un-implemented currently
+  access_token_expiration_minutes:
+    default: 30
+    description: >-
+      auth cookie default experiation time
+          
+
+runtimes:
+  - editor: JupyterLab
+    kernel: Python 3.9
+    edition: Nvidia GPU	
+
+tasks:
+  - type: run_session
+    name: general gpu requirements
+    script: 01-install-deps/general_req.py
+    short_summary: install python dependencies
+    long_summary: install gpu dependencies for python
+    kernel: python3.9
+    edition: Nvidia GPU
+    cpu: 4
+    memory: 16
+
+  - type: run_session
+    name: general langchain settings
+    script: 01-install-deps/langchain_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for langchain
+    kernel: python3
+    cpu: 2
+    memory: 8
+
+  - type: run_session
+    name: general streamlit settings
+    script: 01-install-deps/streamlit_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for streamlit
+    kernel: python3
+    cpu: 2
+    memory: 8

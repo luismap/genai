@@ -28,6 +28,16 @@ environment_variables:
 
 
 tasks:
+
+ - type: run_session
+    name: prepare enviroment
+    script: 00-prepare-steps/prepare_steps.py
+    short_summary: create environment dependencies
+    long_summary: created environment dependencies and skeleton
+    kernel: Python 3.9
+    cpu: 2
+    memory: 8
+
   - type: run_session
     name: general gpu requirements
     script: 01-install-deps/general_req.py

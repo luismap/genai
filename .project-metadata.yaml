@@ -37,8 +37,8 @@ tasks:
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
     kernel: python3
-    cpu: 4
-    memory: 16
+    cpu: 1
+    memory: 2
 
   - type: run_session
     name: general langchain settings
@@ -46,8 +46,8 @@ tasks:
     short_summary: install python dependencies
     long_summary: install python dependencies for langchain
     kernel: python3 
-    cpu: 2
-    memory: 8
+    cpu: 1
+    memory: 2
 
   - type: run_session
     name: general streamlit settings
@@ -55,5 +55,5 @@ tasks:
     short_summary: install python dependencies
     long_summary: install python dependencies for streamlit
     kernel: python3
-    cpu: 2
-    memory: 8
+    cpu: 1
+    memory: 2

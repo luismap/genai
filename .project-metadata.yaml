@@ -1,25 +1,30 @@
-name: lineal-amp
+name: Generative AI usecases
 description: |
-  Demo amp to see how to approach amp development. It goes through the different
-  tools CML has to help Data teams to do MLOps.
+  AMP that show differents types of GenAI usecases
 
 author: luis
 specification_version: 1.0
 prototype_version: 1.0
 date: "2023-10-12"
 
+
 environment_variables:
-  cml_api_key:
-    default: "cml api key"
+  hf_token:
+    default: "add me"
     description: >-
-      create an api key, that will be use to query the workspace for
-      information
-  project_name:
-    default: "choose the name from this project page"
+      provide your hugging face token to dowload gated models
+  secret_key:
+    default: "mysecretkey"
     description: >-
-      project name of this deployment, it will get use to get the model
-      id and use it for the UI application
- 
+      the key will be use to generate auth cookies, un-implemented currently
+  algorithm:
+    default: "HS256"
+    description: >-
+      algorithm use to encode JWT
+  access_token_expiration_minutes:
+    default: 30
+    description: >-
+      auth cookie default experiation time
 
 runtimes:
   - editor: Workbench

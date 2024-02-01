@@ -1,12 +1,11 @@
 name: Generative AI usecases
 description: |
-  AMP that show differents types of GenAI usecases
+  this is a test amp to see how to approach amp development
 
-author: luis
+author: luis map
 specification_version: 1.0
 prototype_version: 1.0
-date: "2023-10-12"
-
+date: "2024-01-13"
 
 environment_variables:
   hf_token:
@@ -20,23 +19,39 @@ environment_variables:
   algorithm:
     default: "HS256"
     description: >-
-      algorithm use to encode JWT
+      algorithm used to generate JWT
   access_token_expiration_minutes:
     default: 30
     description: >-
       auth cookie default experiation time
 
-runtimes:
-  - editor: JupyterLab
-    kernel: Python 3.9
-    edition: Nvidia GPU
+
 
 tasks:
   - type: run_session
-    name: prepare enviroment
+    name: general gpu requirements
     script: 01-install-deps/general_req.py
-    short_summary: create project structure 
-    long_summary: creates project structures, and any prepare steps
+    short_summary: install python dependencies
+    long_summary: install gpu dependencies for python
+    kernel: Python 3.9
+    edition: Nvidia GPU
+    cpu: 4
+    memory: 16
+
+  - type: run_session
+    name: general langchain settings
+    script: 01-install-deps/langchain_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for langchain
+    kernel: python3 
+    cpu: 1
+    memory: 2
+
+  - type: run_session
+    name: general streamlit settings
+    script: 01-install-deps/streamlit_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for streamlit
     kernel: python3
     cpu: 1
     memory: 2

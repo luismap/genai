@@ -49,20 +49,20 @@ tasks:
     memory: 16
 
   - type: run_session
-    name: general langchain settings
-    script: 01-install-deps/langchain_req.py
-    short_summary: install python dependencies
-    long_summary: install python dependencies for langchain
-    kernel: python3 
-    cpu: 1
-    memory: 2
-
-  - type: run_session
     name: general streamlit settings
     script: 01-install-deps/streamlit_req.py
     short_summary: install python dependencies
     long_summary: install python dependencies for streamlit
     kernel: python3
+    cpu: 1
+    memory: 2
+
+  - type: run_session
+    name: general langchain settings
+    script: 01-install-deps/langchain_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for langchain
+    kernel: python3 
     cpu: 1
     memory: 2
 
@@ -75,6 +75,19 @@ tasks:
     kernel: python3
     cpu: 8
     gpu: 1
+    memory: 16
+    bypass_authentication: true
+    environment_variables:
+      TASK_TYPE: START_APPLICATION
+
+  - type: start_application
+    name: UI
+    subdomain: ui
+    script: features/chatbot/presentation/streamlit/cml_streamlit_entrypoint.py
+    short_summary: ui application 
+    long_summary: start genai ui application 
+    kernel: python3
+    cpu: 8
     memory: 16
     bypass_authentication: true
     environment_variables:

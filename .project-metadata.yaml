@@ -29,7 +29,7 @@ environment_variables:
 
 tasks:
 
- - type: run_session
+  - type: run_session
     name: prepare enviroment
     script: 00-prepare-steps/prepare_steps.py
     short_summary: create environment dependencies

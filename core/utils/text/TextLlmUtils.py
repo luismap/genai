@@ -45,7 +45,7 @@ class TextLlmUtils:
         return cleaned_docs
     
     def split(docs: List[Document], 
-              chunk_size = 250,
+              chunk_size = 600,
               chunk_overlap = 10) -> List[Document]:
         """given a list of documents, create splits for those documents base
         om some criteria like chunk_size and chunk_overlap.
@@ -54,7 +54,7 @@ class TextLlmUtils:
 
         Args:
             docs (List[Document]): list of documents
-            chunk_size (int, optional): chunk size. Defaults to 10.
+            chunk_size (int, optional): chunk size.  
             chunk_overlap (int, optional): overlapping chunks. Defaults to 0.
 
         Returns:

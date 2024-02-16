@@ -1,0 +1,30 @@
+#core api
+fastapi
+uvicorn[standard]
+PyYAML
+pydantic
+pydantic[email]
+psycopg[binary]
+ppsycopg2-binary
+SQLAlchemy
+pytest
+pytest-cov
+pytest-notimplemented
+coverage
+black
+mypy
+lint
+passlib
+python-jose[cryptography]
+#genai
+chromadb==0.3.29
+transformers
+datasets
+torch
+accelerate
+sentence-transformers
+bitsandbytes
+faiss-gpu
+beautifulsoup4
+#for audio
+librosa

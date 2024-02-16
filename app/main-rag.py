@@ -9,12 +9,12 @@ from app.routes import rag
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]
 
-#core setup for async
+# core setup for async
 
-#fast api
+# fast api
 app = FastAPI()
 
-with open("logging.yaml", 'rt') as f:
+with open("logging.yaml", "rt") as f:
     config = yaml.safe_load(f.read())
     logging.config.dictConfig(config)
 
@@ -25,9 +25,12 @@ logger.info("Initial log config in root!")
 
 logger.info("finished awaiting loop")
 
+
 @app.get("/")
 def read_root():
-    if canlog: logger.info("root got call")
+    if canlog:
+        logger.info("root got call")
     return {"core": "fast api core setup"}
+
 
 app.include_router(rag.router)

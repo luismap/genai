@@ -4,6 +4,7 @@ uvicorn[standard]
 PyYAML
 pydantic
 pydantic[email]
+pydantic_settings
 psycopg[binary]
 ppsycopg2-binary
 SQLAlchemy
@@ -20,7 +21,7 @@ python-jose[cryptography]
 chromadb==0.3.29
 transformers
 datasets
-torch
+torch==2.1.2
 accelerate
 sentence-transformers
 bitsandbytes

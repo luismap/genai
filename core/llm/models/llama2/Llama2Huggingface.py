@@ -6,6 +6,7 @@ from core.utils.Configs import Settings
 from huggingface_hub import login
 from torch import float16
 from langchain import PromptTemplate
+from langchain_community.llms import VLLM
 
 
 class Llama2Prompt:
@@ -183,3 +184,28 @@ class Llama2Hugginface:
             task, model=self.model_id, torch_dtype=float16, device_map=device
         )  # TODO check for custom device map
         return huggingface_pipeline
+
+    def langchain_vllm_model(
+        self,
+        max_new_tokens: int = 128,
+        top_k: int = 10,
+        top_p: float = 0.95,
+        temperature: float = 0.2,
+        tensor_parallel_size: int = 1,
+        dtype: str = "half",
+    ):  # find the return type and add it
+        """
+        Given the model id, return a vllm version of it.
+        """
+        model = VLLM(
+            model=self.model_id,
+            trust_remote_code=True,  # mandatory for hf models
+            max_new_tokens=max_new_tokens,
+            top_k=top_k,
+            top_p=top_p,
+            temperature=temperature,
+            tensor_parallel_size=tensor_parallel_size,
+            dtype=dtype,
+        )
+
+        return model

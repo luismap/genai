@@ -13,6 +13,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 from core.utils.Configs import Settings
 import logging
+import logging.config
 import yaml
 
 
@@ -38,6 +39,7 @@ class Llama2DataSource(ChatBotDataSource):
         with open("logging.yaml", "rt") as f:
             config = yaml.safe_load(f.read())
             logging.config.dictConfig(config)
+
         appProps = MyUtils.load_properties("general")
         self._logger = logging.getLogger(appProps["logger"])
         self._logger.info("initializing llama2 llm")

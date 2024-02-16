@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from core.llm.models.llama2.Llama2Huggingface import Llama2Hugginface, Llama2Prompt
+from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.ChatBotDataSource import ChatBotDataSource
 from features.chatbot.data.models.ChatBotModel import (
     ChatBotReadModel,
@@ -11,6 +12,8 @@ from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 from core.utils.Configs import Settings
+import logging
+import yaml
 
 
 class MyLlama2DsPrompt:
@@ -32,23 +35,31 @@ class Llama2DataSource(ChatBotDataSource):
     def __init__(
         self, bnb_config: BitsAndBytesConfig = None, device: str = "auto"
     ) -> None:
+        with open("logging.yaml", "rt") as f:
+            config = yaml.safe_load(f.read())
+            logging.config.dictConfig(config)
+        appProps = MyUtils.load_properties("general")
+        self._logger = logging.getLogger(appProps["logger"])
+        self._logger.info("initializing llama2 llm")
         l2hf = Llama2Hugginface()
         settings = Settings()
         self._use_vllm = settings.use_vllm
 
         if self._use_vllm:
             self._vllm_model = l2hf.langchain_vllm_model()
-
+            self._logger.info("using vllm on llama2 llm")
         else:
             if bnb_config is not None:
                 llm_model = l2hf.model_quantize(bnb_config)
                 self._llm_model = llm_model
+                self._logger.info("using bnb config 4 bits")
             else:
                 raise Exception("full model needs to be implemented")
 
             self._hf_pipeline = l2hf.pipeline_from_pretrained_model(
                 llm_model, full_text=False, device=device
             )
+            self._logger.info("using llama2 hugging face models")
 
         self._l2hf = l2hf
 

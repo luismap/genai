@@ -40,7 +40,7 @@ class Llama2DataSource(ChatBotDataSource):
             config = yaml.safe_load(f.read())
             logging.config.dictConfig(config)
 
-        appProps = MyUtils.load_properties("general")
+        appProps = MyUtils.load_properties("general")["app"]
         self._logger = logging.getLogger(appProps["logger"])
         self._logger.info("initializing llama2 llm")
         l2hf = Llama2Hugginface()

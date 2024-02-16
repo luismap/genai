@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expiration_minutes: int
+    use_vllm: str
 
     class Config:
         env_file = ".env"

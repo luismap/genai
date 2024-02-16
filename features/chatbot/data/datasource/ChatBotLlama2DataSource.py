@@ -10,6 +10,7 @@ from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
+from core.utils.Configs import Settings
 
 
 class MyLlama2DsPrompt:
@@ -32,17 +33,25 @@ class Llama2DataSource(ChatBotDataSource):
         self, bnb_config: BitsAndBytesConfig = None, device: str = "auto"
     ) -> None:
         l2hf = Llama2Hugginface()
+        settings = Settings()
+        self._use_vllm = settings.use_vllm
 
-        if bnb_config != None:
-            llm_model = l2hf.model_quantize(bnb_config)
+        if self._use_vllm:
+            self._vllm_model = l2hf.langchain_vllm_model()
+
         else:
-            raise Exception("full model needs to be implemented")
+            if bnb_config is not None:
+                llm_model = l2hf.model_quantize(bnb_config)
+                self._llm_model = llm_model
+            else:
+                raise Exception("full model needs to be implemented")
 
-        self._hf_pipeline = l2hf.pipeline_from_pretrained_model(
-            llm_model, full_text=False, device=device
-        )
+            self._hf_pipeline = l2hf.pipeline_from_pretrained_model(
+                llm_model, full_text=False, device=device
+            )
+
         self._l2hf = l2hf
-        self._llm_model = llm_model
+
         # self._langchain_hf_pipeline = HuggingFacePipeline(pipeline=self._hf_pipeline, batch_size=12)
         self._basic_prompt = PromptTemplate.from_template(Llama2Prompt.prompt_template)
         self._memory_prompt = PromptTemplate.from_template(
@@ -76,8 +85,13 @@ class Llama2DataSource(ChatBotDataSource):
     def generate_base_answer(self, question: str) -> ChatBotReadModel:
         prompt = self._l2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
-        answer = self._hf_pipeline(question_formatted)
-        answer_top_1 = answer[0]["generated_text"]  # can be tweaked for more answers
+        if self._use_vllm:
+            answer = self._vllm_model.generate(question)
+        else:
+            answer = self._hf_pipeline(question_formatted)
+            answer_top_1 = answer[0][
+                "generated_text"
+            ]  # can be tweaked for more answers
 
         cbrm = ChatBotReadModel(
             question=question, model_use=self._l2hf.model_id, answer=answer_top_1

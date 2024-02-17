@@ -34,7 +34,10 @@ class Llama2DataSource(ChatBotDataSource):
     """
 
     def __init__(
-        self, bnb_config: BitsAndBytesConfig = None, device: str = "auto"
+        self,
+        bnb_config: BitsAndBytesConfig = None,
+        device: str = "auto",
+        vllm_configs: dict = {"tensor_parallel_size": 2},
     ) -> None:
         with open("logging.yaml", "rt") as f:
             config = yaml.safe_load(f.read())
@@ -48,7 +51,7 @@ class Llama2DataSource(ChatBotDataSource):
         self._use_vllm = settings.use_vllm
 
         if self._use_vllm:
-            self._vllm_model = l2hf.langchain_vllm_model()
+            self._vllm_model = l2hf.langchain_vllm_model(**vllm_configs)
             self._logger.info("using vllm on llama2 llm")
         else:
             if bnb_config is not None:
@@ -99,15 +102,13 @@ class Llama2DataSource(ChatBotDataSource):
         prompt = self._l2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
         if self._use_vllm:
-            answer = self._vllm_model.generate(question)
+            answer = self._vllm_model(question)
         else:
             answer = self._hf_pipeline(question_formatted)
-            answer_top_1 = answer[0][
-                "generated_text"
-            ]  # can be tweaked for more answers
+            answer = answer[0]["generated_text"]  # can be tweaked for more answers
 
         cbrm = ChatBotReadModel(
-            question=question, model_use=self._l2hf.model_id, answer=answer_top_1
+            question=question, model_use=self._l2hf.model_id, answer=answer
         )
         return cbrm
 

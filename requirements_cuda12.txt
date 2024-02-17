@@ -1,10 +1,16 @@
 #core api
-fastapi
+vllm==0.2.7
+ray[default]==2.9.2
+torch==2.1.2
+fastapi==0.109.2
 uvicorn[standard]
 PyYAML
-pydantic
+#pydantic
+pydantic==2.6.1
+pydantic-core==2.16.2
+pydantic-settings==2.1.0
 pydantic[email]
-pydantic_settings
+
 psycopg[binary]
 ppsycopg2-binary
 SQLAlchemy
@@ -21,7 +27,6 @@ python-jose[cryptography]
 chromadb==0.3.29
 transformers
 datasets
-torch==2.1.2
 accelerate
 sentence-transformers
 bitsandbytes

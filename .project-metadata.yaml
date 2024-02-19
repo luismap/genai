@@ -47,8 +47,8 @@ tasks:
     script: 01-install-deps/general_req.py
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
-    kernel: Python 3.9
-    edition: Nvidia GPU
+    kernel: Python 3.10
+    edition: cuda 12 v2.0
     cpu: 4
     memory: 16
 
@@ -76,8 +76,8 @@ tasks:
     script: cml/backend/qa-entrypoint.py
     short_summary: qa endpoint 
     long_summary: start questions and answer bot endpoint
-    kernel: python3
-    edition: 
+    kernel: Python 3.10
+    edition: cuda 12 v2.0
     cpu: 8
     gpu: 1
     memory: 16

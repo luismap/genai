@@ -24,7 +24,11 @@ environment_variables:
     default: 30
     description: >-
       auth cookie default experiation time
-
+  use_vllm:
+    default: false
+    description: >-
+      if we want to use vllm, a minimum of 2 gpus per use case will
+      be needed ex.(rag, qa, ect)
 
 
 tasks:
@@ -67,12 +71,13 @@ tasks:
     memory: 2
 
   - type: start_application
-    name: rag backend
-    subdomain: rag
-    script: cml/backend/rag-entrypoint.py
-    short_summary: rag endpoint 
-    long_summary: start retrieval augmented generation endpoint
+    name: qa backend
+    subdomain: qa
+    script: cml/backend/qa-entrypoint.py
+    short_summary: qa endpoint 
+    long_summary: start questions and answer bot endpoint
     kernel: python3
+    edition: 
     cpu: 8
     gpu: 1
     memory: 16

@@ -12,7 +12,7 @@ pydantic-settings==2.1.0
 pydantic[email]
 
 psycopg[binary]
-ppsycopg2-binary
+psycopg2-binary
 SQLAlchemy
 pytest
 pytest-cov

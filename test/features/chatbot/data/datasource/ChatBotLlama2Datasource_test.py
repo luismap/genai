@@ -34,15 +34,15 @@ def llama2_datasource_vllm(use_vllm_env_var_true):
     del l2ds
 
 
-class TestChatbotLlama2DatasourceVllmIntegration:
-    def test_can_use_vllm(self, llama2_datasource_vllm):
-        l2ds = llama2_datasource_vllm
-        question = "hi!"
-        assert len(l2ds.generate_base_answer(question).answer) >= 2
-
-
 class TestChatbotLlama2DatasourceHuggingfaceIntegration:
     def test_can_use_hugging_face(self, llama2_datasource_hugginface):
         l2hf = llama2_datasource_hugginface
         question = "hi!"
         assert len(l2hf.generate_base_answer(question).answer) >= 2
+
+
+class TestChatbotLlama2DatasourceVllmIntegration:
+    def test_can_use_vllm(self, llama2_datasource_vllm):
+        l2ds = llama2_datasource_vllm
+        question = "hi!"
+        assert len(l2ds.generate_base_answer(question).answer) >= 2

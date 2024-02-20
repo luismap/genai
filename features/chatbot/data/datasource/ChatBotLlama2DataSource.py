@@ -99,7 +99,7 @@ class Llama2DataSource(ChatBotDataSource):
         prompt = self._l2hf.langchain_prompt()
         question_formatted = prompt.format(user_message=question)
         if self._use_vllm:
-            answer = self._vllm_model(question)
+            answer = self._vllm_model.invoke(question)
         else:
             answer = self._hf_pipeline(question_formatted)
             answer = answer[0]["generated_text"]  # can be tweaked for more answers
@@ -155,7 +155,12 @@ class Llama2DataSource(ChatBotDataSource):
             )
             data.append(question_formatted)
 
-        responses = zip(self._hf_pipeline(data), cbpms)
+        if self._use_vllm:
+            answers = self._vllm_model.batch(data)
+        else:
+            answers = self._hf_pipeline(question_formatted)
+
+        responses = zip(answers, cbpms)
 
         for res, payload in responses:
             response_history = (
@@ -163,7 +168,11 @@ class Llama2DataSource(ChatBotDataSource):
                 if payload.history
                 else ""
             )
-            answer = res[0]["generated_text"]
+            if self._use_vllm:
+                answer = res
+            else:
+                answer = res[0]["generated_text"]
+
             cbrm = ChatBotReadModel(
                 user_id=payload.user_id,
                 question=payload.question,

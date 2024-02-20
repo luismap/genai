@@ -2,10 +2,13 @@
 fastapi
 uvicorn[standard]
 PyYAML
-pydantic
-pydantic[email]
+
+#pydantic
+pydantic==2.6.1
+pydantic-core==2.16.2
+pydantic-settings==2.1.0
 psycopg[binary]
-psycopg2
+psycopg2[binary]
 SQLAlchemy
 pytest
 pytest-cov

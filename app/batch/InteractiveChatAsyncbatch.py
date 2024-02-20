@@ -48,7 +48,7 @@ async def batch_ask(cbpm: ChatBotPayloadModel) -> Awaitable[ChatBotReadModel]:
 
     job_future: concurrent.Future[ChatBotReadModel] = global_loop.create_future()
 
-    logger.info(f"my future type: {type(job_future)}")
+    # logger.info(f"my future type: {type(job_future)}")
     await queue.put((job_future, cbpm))
 
     return await job_future
@@ -86,11 +86,11 @@ def process_batch(
 ) -> None:
     jobs_future, cbpms = zip(*batch)
 
-    logger.info(f"object before asking llm: {type(cbpms)}")
+    # logger.info(f"object before asking llm: {type(cbpms)}")
     response = ic.ask_me_something(cbpms)
 
     for idx in range(len(response)):
-        logger.info(f"object before sending future: {type(response[idx])}")
+        # logger.info(f"object before sending future: {type(response[idx])}")
         jobs_future[idx].set_result(response[idx])
         queue.task_done()
 

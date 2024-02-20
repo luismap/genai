@@ -29,6 +29,22 @@ environment_variables:
     description: >-
       if we want to use vllm, a minimum of 2 gpus per use case will
       be needed ex.(rag, qa, ect)
+  num_workers:
+    default: 1
+    description: >-
+      number of ray workers for each ray cluster and each usecase.
+  worker_ram_memory:
+    default: 16
+    description: >-
+      ray worker ram memory for each ray cluster and each usecase.
+  worker_cpu:
+    default: 8
+    description: >-
+     ray worker cpu memory for each ray cluster and each usecase. 
+  worker_gpu:
+    default: 1
+    description: >-
+      default to 1. tensors needs a multiple of the attentions layers.
 
 
 tasks:

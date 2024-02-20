@@ -7,9 +7,6 @@ from features.chatbot.data.models.ChatBotModel import (
     ChatBotPayloadModel,
 )
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
-from langchain.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
 from langchain import PromptTemplate
 from core.utils.Configs import Settings
 import logging

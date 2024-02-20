@@ -110,6 +110,7 @@ class Llama2DataSource(ChatBotDataSource):
         return cbrm
 
     def _get_history(self) -> List[Tuple[str, str]]:
+        # TODO refactor function, this is not used
         messages = self._chat_chain_memory.chat_memory.messages
         messages_parsed = [
             (messages[i].content, messages[i + 1].content)

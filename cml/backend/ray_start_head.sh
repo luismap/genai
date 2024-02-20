@@ -9,4 +9,4 @@ ray start --head --num-cpus=$worker_cpu --num-gpus=$worker_gpu --include-dashboa
 cat /tmp/ray/ray_current_cluster > cluster_info.txt
 
 echo ""
-echo "https://public-$CDSW_ENGINE_ID.$CDSW_DOMAIN"
+echo "https://read-only-$CDSW_ENGINE_ID.$CDSW_DOMAIN"

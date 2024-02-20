@@ -187,7 +187,7 @@ class Llama2Hugginface:
 
     def langchain_vllm_model(
         self,
-        max_new_tokens: int = 128,
+        max_new_tokens: int = 512,
         top_k: int = 10,
         top_p: float = 0.95,
         temperature: float = 0.2,

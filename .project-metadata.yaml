@@ -60,7 +60,7 @@ tasks:
 
   - type: run_session
     name: general gpu requirements
-    script: 01-install-deps/general_req.py
+    script: 01-install-deps/general_req_cuda12.py
     short_summary: install python dependencies
     long_summary: install gpu dependencies for python
     kernel: Python 3.10

@@ -1,0 +1,115 @@
+name: Generative AI usecases
+description: |
+  this is a test amp to see how to approach amp development
+
+author: luis map
+specification_version: 1.0
+prototype_version: 1.0
+date: "2024-01-13"
+
+environment_variables:
+  hf_token:
+    default: "add me"
+    description: >-
+      provide your hugging face token to dowload gated models
+  secret_key:
+    default: "mysecretkey"
+    description: >-
+      the key will be use to generate auth cookies, un-implemented currently
+  algorithm:
+    default: "HS256"
+    description: >-
+      algorithm used to generate JWT
+  access_token_expiration_minutes:
+    default: 30
+    description: >-
+      auth cookie default experiation time
+  use_vllm:
+    default: false
+    description: >-
+      if we want to use vllm, a minimum of 2 gpus per use case will
+      be needed ex.(rag, qa, ect)
+  num_workers:
+    default: 1
+    description: >-
+      number of ray workers for each ray cluster and each usecase.
+  worker_ram_memory:
+    default: 16
+    description: >-
+      ray worker ram memory for each ray cluster and each usecase.
+  worker_cpu:
+    default: 8
+    description: >-
+     ray worker cpu memory for each ray cluster and each usecase. 
+  worker_gpu:
+    default: 1
+    description: >-
+      default to 1. tensors needs a multiple of the attentions layers.
+
+
+tasks:
+
+  - type: run_session
+    name: prepare enviroment
+    script: 00-prepare-steps/prepare_steps.py
+    short_summary: create environment dependencies
+    long_summary: created environment dependencies and skeleton
+    kernel: Python 3.9
+    cpu: 2
+    memory: 8
+
+  - type: run_session
+    name: general gpu requirements
+    script: 01-install-deps/general_req.py
+    short_summary: install python dependencies
+    long_summary: install gpu dependencies for python
+    kernel: Python 3.10
+    edition: cuda 12 v2.0
+    cpu: 4
+    memory: 16
+
+  - type: run_session
+    name: general streamlit settings
+    script: 01-install-deps/streamlit_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for streamlit
+    kernel: python3
+    cpu: 1
+    memory: 2
+
+  - type: run_session
+    name: general langchain settings
+    script: 01-install-deps/langchain_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for langchain
+    kernel: python3 
+    cpu: 1
+    memory: 2
+
+  - type: start_application
+    name: qa backend
+    subdomain: qa
+    script: cml/backend/qa-entrypoint.py
+    short_summary: qa endpoint 
+    long_summary: start questions and answer bot endpoint
+    kernel: Python 3.10
+    edition: cuda 12 v2.0
+    cpu: 8
+    gpu: 1
+    memory: 16
+    bypass_authentication: true
+    environment_variables:
+      TASK_TYPE: START_APPLICATION
+
+  - type: start_application
+    name: UI
+    subdomain: ui
+    script: features/chatbot/presentation/streamlit/cml_streamlit_entrypoint.py
+    short_summary: ui application 
+    long_summary: start genai ui application 
+    kernel: python3
+    cpu: 8
+    memory: 16
+    bypass_authentication: true
+    environment_variables:
+      TASK_TYPE: START_APPLICATION

@@ -68,6 +68,15 @@ tasks:
     cpu: 4
     memory: 16
 
+  - type: run_session
+    name: general streamlit settings
+    script: 01-install-deps/streamlit_req.py
+    short_summary: install python dependencies
+    long_summary: install python dependencies for streamlit
+    kernel: python3
+    cpu: 1
+    memory: 2
+
   - type: start_application
     name: UI
     subdomain: ui

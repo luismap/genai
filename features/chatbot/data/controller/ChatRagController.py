@@ -9,6 +9,7 @@ from features.chatbot.data.models.ChatRagModel import (
     ChatRagReadModel,
 )
 from features.chatbot.domain.controller.ChatRagControllerABC import ChatRagControllerABC
+from langchain.schema import Document
 
 
 class ChatRagController(ChatRagControllerABC):
@@ -63,3 +64,9 @@ class ChatRagController(ChatRagControllerABC):
         else:
             context_length = 0
         return context_length
+
+    def similarity_search(self, content: str, user_id: str) -> List[Document]:
+        docs = self._chat_datasource._user_info[user_id]["vector_db"].similarity_search(
+            content
+        )
+        return docs

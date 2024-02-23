@@ -117,7 +117,7 @@ Please answer the questions using that context. If you do not know the answer, d
             "default": {
                 "get_history": "false",
                 "history": chat_rag_history,
-                "vector_db": vector_db.retriever(),
+                "vector_db": vector_db,
             }
         }
 
@@ -129,7 +129,7 @@ Please answer the questions using that context. If you do not know the answer, d
             self._user_info[user_name] = {
                 "get_history": "false",
                 "history": chat_rag_history,
-                "vector_db": self._vector_db.create_new_instance().retriever(),
+                "vector_db": self._vector_db.create_new_instance(),
             }
 
             self._users.add(user_name)
@@ -181,7 +181,7 @@ Please answer the questions using that context. If you do not know the answer, d
             if crm.user_id not in self._users:
                 self._add_user(user_name=crm.user_id)
 
-            retrieve_docs = self._user_info[crm.user_id]["vector_db"].invoke(
+            retrieve_docs = self._user_info[crm.user_id]["vector_db"].similarity_search(
                 crm.question
             )
             context = TextLlmUtils.format_docs(retrieve_docs)

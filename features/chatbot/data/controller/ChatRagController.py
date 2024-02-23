@@ -28,7 +28,7 @@ class ChatRagController(ChatRagControllerABC):
         self._chat_datasource = MyUtils.first(
             datasources, lambda ds: ds.is_available == True
         )
-        self._vector_db: VectorDbSource = self._chat_datasource._vector_db
+        # deprecated: self._vector_db: VectorDbSource = self._chat_datasource._vector_db
 
         self._logger.info("chatrag controller initialized")
 
@@ -39,11 +39,15 @@ class ChatRagController(ChatRagControllerABC):
         return answers
 
     def load_text_from_local(self, path: str, user_id: str) -> bool:
-        loaded = self._user_info[user_id]["vector_db"].load_text_from_local(path)
+        loaded = self._chat_datasource._user_info[user_id][
+            "vector_db"
+        ].load_text_from_local(path)
         return loaded
 
     def load_from_web(self, links: List[str], user_id: str) -> bool:
-        web_loaded = self._user_info[user_id]["vector_db"].load_from_web(links)
+        web_loaded = self._chat_datasource._user_info[user_id][
+            "vector_db"
+        ].load_from_web(links)
         return web_loaded
 
     def clean_context(self, user_id) -> bool:

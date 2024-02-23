@@ -88,3 +88,16 @@ class TextLlmUtils:
 
     def from_doc_to_text(docs: List[Document]) -> List[str]:
         return [doc.page_content for doc in docs]
+
+    def format_docs(docs: List[Document]) -> str:
+        """Given a list of documents. Returns a string with the documents
+        concatenated. This can be use to pass it as a context to an LLM for
+        RAG aware information
+
+        Args:
+            docs (List[Document]): the document list
+
+        Returns:
+            str: documents content concatenated
+        """
+        return "\n\n".join(doc.page_content for doc in docs)

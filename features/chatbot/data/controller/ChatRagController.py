@@ -38,12 +38,12 @@ class ChatRagController(ChatRagControllerABC):
         answers = self._chat_datasource.chat_rag(crpms)
         return answers
 
-    def load_text_from_local(self, path: str) -> bool:
-        loaded = self._vector_db.load_text_from_local(path)
+    def load_text_from_local(self, path: str, user_id: str) -> bool:
+        loaded = self._user_info[user_id]["vector_db"].load_text_from_local(path)
         return loaded
 
-    def load_from_web(self, links: List[str]) -> bool:
-        web_loaded = self._vector_db.load_from_web(links)
+    def load_from_web(self, links: List[str], user_id: str) -> bool:
+        web_loaded = self._user_info[user_id]["vector_db"].load_from_web(links)
         return web_loaded
 
     def clean_context(self, user_id) -> bool:

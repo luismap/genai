@@ -27,8 +27,8 @@ rag_uc = RagInteractiveChat(cb_ragctr)
 queue: asyncio.Queue = None
 global_loop: asyncio.AbstractEventLoop = None
 model = ""
-max_batch_size = 9
-wait_time = 3.0
+max_batch_size = 16
+wait_time = 1.0
 
 canlog = True
 appProps = MyUtils.load_properties("general")["app"]
@@ -40,7 +40,7 @@ with open("logging.yaml", "rt") as f:
 # Get an instance of the logger and use it to write a log!
 # Note: Do this AFTER the config is loaded above or it won't use the config.
 logger = logging.getLogger(appProps["logger"])
-logger.info("Initial log config in route post!")
+logger.info("Initial log config in route rag!")
 
 # core setup for async
 language_code_map = ["english", "spanish"]
@@ -52,7 +52,7 @@ async def batch_ask(crpm: ChatRagPayloadModel) -> Awaitable[ChatRagReadModel]:
 
     job_future: concurrent.Future[ChatRagReadModel] = global_loop.create_future()
 
-    logger.info(f"my future type: {type(job_future)}")
+    # logger.info(f"my future type: {type(job_future)}")
     await queue.put((job_future, crpm))
 
     return await job_future
@@ -80,11 +80,11 @@ def process_batch(
 ) -> None:
     jobs_future, crpms = zip(*batch)
 
-    logger.info(f"object before asking llm: {type(crpms)}")
+    # logger.info(f"object before asking llm: {type(crpms)}")
     response = rag_uc.ask(crpms)
 
     for idx in range(len(response)):
-        logger.info(f"object before sending future: {type(response[idx])}")
+        # logger.info(f"object before sending future: {type(response[idx])}")
         jobs_future[idx].set_result(response[idx])
         queue.task_done()
 
@@ -106,6 +106,8 @@ async def batch_processing_loop(loop: asyncio.AbstractEventLoop):
                 Tuple[Awaitable[ChatRagReadModel], ChatRagPayloadModel]
             ] = [await queue.get()]
 
+            # TODO, add another call, otherwise, once the first item gets pull from the queue,
+            # it will trigger a batch process in the next step
             while len(current_batch) < max_batch_size and not queue.empty():
                 try:
                     current_batch.append(await asyncio.wait_for(queue.get(), wait_time))

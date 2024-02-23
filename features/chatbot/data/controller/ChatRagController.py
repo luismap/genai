@@ -1,7 +1,6 @@
 import logging
 from typing import List
 from core.utils.MyUtils import MyUtils
-from features.chatbot.data.datasource.RagLlama2DataSource import RagLlama2DataSource
 from features.chatbot.data.datasource.api.RagChatBotDataSource import (
     RagChatBotDataSource,
 )

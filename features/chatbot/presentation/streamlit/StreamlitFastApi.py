@@ -227,10 +227,9 @@ def chat_rag(input_text):
 
 
 def generate_web_button(urls):
-    route = "rag/web-url-src-upload"
     user_id = st.session_state.user_name
-    data = {"urls": urls, "user_id": user_id}
-    r = requests.post(
+    route = f"rag/web-url-src-upload?user_id={user_id}"
+    requests.post(
         rag_url + route,
         data=json.dumps(urls),
         headers={"Content-Type": "application/json"},
@@ -260,7 +259,8 @@ def vector_load_from_web(content: str):
 
 def vector_load_from_file(filename: str):
     info = vector_tab.info(f"populating vector db with content from {filename}")
-    route = f"rag/document-upload?path={filename}"
+    user_id = st.session_state.user_name
+    route = f"rag/document-upload?path={filename}&user_id={user_id}"
     r = requests.post(rag_url + route)
     info.empty()
     return r.json()
@@ -319,7 +319,8 @@ def log(line: str, widget):
 
 
 def vdb_simsearch(text: str):
-    route = f"rag/vdb-similarity-search?content={text}"
+    user_id = st.session_state.user_name
+    route = f"rag/vdb-similarity-search?content={text}&user_id={user_id}"
     r = requests.post(rag_url + route)
     content = r.json()  # has a list of Documents
     try:

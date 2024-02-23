@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from features.chatbot.data.models.ChatRagModel import ChatRagReadModel
+from langchain.schema import Document
 
 
 class ChatRagControllerABC(ABC):
@@ -23,4 +24,8 @@ class ChatRagControllerABC(ABC):
 
     @abstractmethod
     def get_context_length(user_id: str) -> int:
+        pass
+
+    @abstractmethod
+    def similarity_search(content: str, user_id: str) -> List[Document]:
         pass

@@ -4,7 +4,6 @@ from core.utils.MyUtils import MyUtils
 from features.chatbot.data.datasource.api.RagChatBotDataSource import (
     RagChatBotDataSource,
 )
-from features.chatbot.data.datasource.api.VectorDbSource import VectorDbSource
 from features.chatbot.data.models.ChatRagModel import (
     ChatRagPayloadModel,
     ChatRagReadModel,
@@ -28,7 +27,6 @@ class ChatRagController(ChatRagControllerABC):
         self._chat_datasource = MyUtils.first(
             datasources, lambda ds: ds.is_available == True
         )
-        # deprecated: self._vector_db: VectorDbSource = self._chat_datasource._vector_db
 
         self._logger.info("chatrag controller initialized")
 

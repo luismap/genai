@@ -23,7 +23,7 @@ class VectorDbSource(ABC):
         pass
 
     @abstractmethod
-    def similarity_search(question: str) -> List[Document]:
+    def similarity_search(question: str, k: int = 2) -> List[Document]:
         pass
 
     @abstractmethod

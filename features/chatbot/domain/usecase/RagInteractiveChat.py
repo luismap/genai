@@ -4,6 +4,7 @@ from features.chatbot.data.models.ChatRagModel import (
     ChatRagPayloadModel,
     ChatRagReadModel,
 )
+from langchain.schema import Document
 
 
 class RagInteractiveChat:
@@ -27,3 +28,6 @@ class RagInteractiveChat:
 
     def get_context_length(self, user_id=str) -> bool:
         return self._chatbot_ctr.get_context_length(user_id=user_id)
+
+    def similarity_search(self, content=str, user_id=str) -> List[Document]:
+        return self._chatbot_ctr.similarity_search(content=content, user_id=user_id)

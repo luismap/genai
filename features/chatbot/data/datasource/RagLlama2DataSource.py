@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from core.llm.models.llama2.Llama2Huggingface import Llama2Hugginface
 from core.utils.Configs import Settings
 from features.chatbot.data.datasource.api.RagChatBotDataSource import (
@@ -73,7 +73,7 @@ class RagLlama2DataSource(RagChatBotDataSource):
         chatchain_prompt_template = """
 <s>[INST]<<SYS>>You are a helpful agent.You will be given a context with information 
 about different topics and a history of our current conversation. Please answer the questions 
-using the information provided in the context and history. If you do not know the answer, do 
+using the information provided in the context and in the history of our conversation. If you do not know the answer, do 
 not make up the answers. Please be short and concise with your answer.<</SYS>>
 
 {context}
@@ -171,6 +171,20 @@ Please answer the questions using that context. If you do not know the answer, d
         )
         return cbrm
 
+    def _generate_history(self, history: List[Tuple[str, str]]) -> str:
+        """
+        given a list of tuples with values question and answer
+        generate a str for use as history for llama model
+
+        Args:
+            history (List[Tuple[str, str]]): history tuple
+
+        Returns:
+            str: history formatted
+        """
+        combined = [q + " [/INST] " + a + "</s><s>[INST]" for q, a in history]
+        return "\n".join(combined)
+
     def chat_rag(
         self, chatrag_models=List[ChatRagPayloadModel]
     ) -> List[ChatRagReadModel]:
@@ -185,7 +199,9 @@ Please answer the questions using that context. If you do not know the answer, d
                 crm.question
             )
             context = TextLlmUtils.format_docs(retrieve_docs)
-            chat_history = self._user_info[crm.user_id]["history"]
+            chat_history = self._generate_history(
+                self._user_info[crm.user_id]["history"]
+            )
             question_formatted = self._chatchain_prompt.format(
                 context=context, history=chat_history, question=crm.question
             )

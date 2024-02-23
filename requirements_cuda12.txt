@@ -3,6 +3,7 @@ vllm==0.2.7
 ray[default]==2.9.2
 torch==2.1.2
 fastapi==0.109.2
+starlette==0.36.3
 uvicorn[standard]
 PyYAML
 #pydantic

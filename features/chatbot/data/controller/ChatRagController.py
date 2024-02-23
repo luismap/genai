@@ -38,12 +38,20 @@ class ChatRagController(ChatRagControllerABC):
         return answers
 
     def load_text_from_local(self, path: str, user_id: str) -> bool:
+        # TODO move checking fast-api with Oauth
+        if user_id not in self._chat_datasource._users:
+            self._chat_datasource._add_user(user_id)
+
         loaded = self._chat_datasource._user_info[user_id][
             "vector_db"
         ].load_text_from_local(path)
         return loaded
 
     def load_from_web(self, links: List[str], user_id: str) -> bool:
+        # TODO move checking fast-api with Oauth
+        if user_id not in self._chat_datasource._users:
+            self._chat_datasource._add_user(user_id)
+
         web_loaded = self._chat_datasource._user_info[user_id][
             "vector_db"
         ].load_from_web(links)
@@ -66,6 +74,10 @@ class ChatRagController(ChatRagControllerABC):
         return context_length
 
     def similarity_search(self, content: str, user_id: str) -> List[Document]:
+        # TODO move checking fast-api with Oauth
+        if user_id not in self._chat_datasource._users:
+            self._chat_datasource._add_user(user_id)
+
         docs = self._chat_datasource._user_info[user_id]["vector_db"].similarity_search(
             content
         )

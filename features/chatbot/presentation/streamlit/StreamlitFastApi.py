@@ -323,6 +323,7 @@ def vdb_simsearch(text: str):
     route = f"rag/vdb-similarity-search?content={text}&user_id={user_id}"
     r = requests.post(rag_url + route)
     content = r.json()  # has a list of Documents
+
     try:
         parsed = [
             f"page_content:{doc['page_content']}\n"
@@ -422,7 +423,7 @@ ctx_content_rag.write(
 
 with col2_chat_rag.form("chat_rag"):
     text = st.text_area("RAG - Ask me something:", "What is cloudera cml?")
-    submitted = st.form_submit_button("Parse")
+    submitted = st.form_submit_button("Submit")
     if submitted:
         chat_rag(text)
 

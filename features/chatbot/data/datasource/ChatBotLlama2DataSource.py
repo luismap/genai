@@ -158,7 +158,7 @@ class Llama2DataSource(ChatBotDataSource):
         if self._use_vllm:
             answers = self._vllm_model.batch(data)
         else:
-            answers = self._hf_pipeline(question_formatted)
+            answers = self._hf_pipeline(data)
 
         responses = zip(answers, cbpms)
 

@@ -33,18 +33,18 @@ async def ask_llm(model: ChatRagPayloadModel) -> ChatRagResponseModel:
 
 
 @router.post("/web-url-src-upload")
-def web_upload(urls: List[str]):
-    return rag_uc.load_from_web(urls)
+def web_upload(urls: List[str], user_id: str):
+    return rag_uc.load_from_web(urls, user_id)
 
 
 @router.post("/document-upload")
-def document_upload(path: str):
-    return rag_uc.load_text_from_local(path=path)
+def document_upload(path: str, user_id: str):
+    return rag_uc.load_text_from_local(path=path, user_id=user_id)
 
 
 @router.post("/vdb-similarity-search")
-def similarity_search(content: str):
-    answer = rag_uc._chatbot_ctr._vector_db.similarity_search(content)
+def similarity_search(content: str, user_id: str):
+    answer = rag_uc.similarity_search(content, user_id)
     return answer
 
 

@@ -1,1 +1,1 @@
-!pip install -r requirements_cuda12.txt
+!pip install -r requirements_freezed_cuda12.txt

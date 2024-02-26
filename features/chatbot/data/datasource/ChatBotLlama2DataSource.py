@@ -139,7 +139,7 @@ class Llama2DataSource(ChatBotDataSource):
         Returns:
             str: history formatted
         """
-        combined = [q + " [/INST] " + a + "</s><s>[INST]" for q, a in history]
+        combined = ["human: " + q + "\nassistant: " + a + "\n" for q, a in history]
         return "\n".join(combined)
 
     def chat(self, cbpms=List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:

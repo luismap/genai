@@ -26,10 +26,10 @@ passlib
 python-jose[cryptography]
 #genai
 chromadb==0.3.29
-transformers
+transformers==4.38.1
 datasets
 accelerate
-sentence-transformers
+sentence-transformers==2.4.0
 bitsandbytes
 faiss-gpu
 beautifulsoup4

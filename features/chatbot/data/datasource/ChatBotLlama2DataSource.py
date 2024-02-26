@@ -7,7 +7,7 @@ from features.chatbot.data.models.ChatBotModel import (
     ChatBotPayloadModel,
 )
 from core.llm.models.configs.BitsAndBytes import BitsAndBytesConfig
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 from core.utils.Configs import Settings
 import logging
 import logging.config

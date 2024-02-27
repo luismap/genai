@@ -70,17 +70,20 @@ class RagLlama2DataSource(RagChatBotDataSource):
             )
 
         self._l2hf = l2hf
-        chatchain_prompt_template = """
-<s>[INST]<<SYS>>You are a helpful agent.You will be given a context with information 
-about different topics and a history of our current conversation. Please answer the questions 
-using the information provided in the context and in the history of our conversation. If you do not know the answer, do 
-not make up the answers. Please be short and concise with your answer.<</SYS>>
+        chatchain_prompt_template = """<s>[INST]<<SYS>>The following is a conversation between a
+good and helpful assistant and a human. The assistant is talkative and provides specific details
+from its context. The human will ask a questions, the assistant will answer using the conversation
+context(enclosed in three backticks) and the conversation history. If the assistant does not
+know the answer,it truthfully replies itdoes not know.<</SYS>>
 
+```context:
 {context}
+```
+conversation history:
+{history}
 
-# Current conversation:
-# {history}
-# question: {question} [/INST]
+human: {question}
+[/INST]
 """
         prompt_template = """<s>[INST]<<SYS>>
 You are a helpful agent.You will be given a context with information about different topics.
@@ -182,7 +185,8 @@ Please answer the questions using that context. If you do not know the answer, d
         Returns:
             str: history formatted
         """
-        combined = [q + " [/INST] " + a + "</s><s>[INST]" for q, a in history]
+        # combined = [q + " [/INST] " + a + "</s><s>[INST]" for q, a in history]
+        combined = ["human: " + q + "\nassistant: " + a for q, a in history]
         return "\n".join(combined)
 
     def chat_rag(

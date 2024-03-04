@@ -15,14 +15,13 @@ import yaml
 
 
 class MyLlama2DsPrompt:
-    memory_prompt_template = """<s>[INST] <<SYS>> The following is a conversation between a
-good and helpful assistant and a human. The assistant is talkative and provides a specific details
-from its context. The human will ask a questions, the assistant will answer using the context and
-its own knowledge. If the assistant does not know the answer, it truthfully replies it does not know.
-<</SYS>>
+    memory_prompt_template = """[INST] <<SYS>> The following is a friendly conversation
+between a human and an assistant. The assistant is professional and provides lots of specific
+details from its context.If the assistant does not know the answer to a question, it truthfully
+says it does not know.
 CURRENT CONTEXT:
 {history}
-
+<</SYS>>
 human: {input}
 [/INST]
 """

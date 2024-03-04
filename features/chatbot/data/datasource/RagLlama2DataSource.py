@@ -71,17 +71,15 @@ class RagLlama2DataSource(RagChatBotDataSource):
 
         self._l2hf = l2hf
         chatchain_prompt_template = """<s>[INST]<<SYS>>The following is a conversation between a
-good and helpful assistant and a human. The assistant is talkative and provides specific details
-from its context. The human will ask a questions, the assistant will answer using the conversation
-context(enclosed in three backticks) and the conversation history. If the assistant does not
-know the answer,it truthfully replies itdoes not know.<</SYS>>
-
-```context:
+good and helpful assistant and a human. The assistant is professional and provides specific details
+from its context. The human will ask a questions, the assistant will answer using the context and
+the conversation history. If the assistant does not know the answer, it truthfully replies
+it does not know.
+context:
 {context}
-```
 conversation history:
 {history}
-
+<</SYS>>
 human: {question}
 [/INST]
 """
@@ -145,9 +143,9 @@ Please answer the questions using that context. If you do not know the answer, d
             return False  # add exception
         else:
             self._user_info[user_id]["history"] = []
-            self._user_info[user_id][
-                "vector_db"
-            ] = self._vector_db.create_new_instance()
+            self._user_info[user_id]["vector_db"] = (
+                self._vector_db.create_new_instance()
+            )
             return True
 
     def is_available(self) -> bool:

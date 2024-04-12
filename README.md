@@ -13,7 +13,7 @@ To use distributed mode, please add the following extra settings.
 
 ## distributed mode extra settings
 1. add the following cml runtime. (If you would like to use your own image. Refer to Runtime section for further steps)
-**luismap/cml:pbjcuda-V2.0**
+**luismap/cml:pbjcuda12-v2.0**
 
 2. add share storage for ray. go to project settings > advance > shared memory limit and set it to be around 64 GB.
 

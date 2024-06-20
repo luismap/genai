@@ -15,15 +15,16 @@ import yaml
 
 
 class MyLlama2DsPrompt:
-    memory_prompt_template = """[INST] <<SYS>> The following is a friendly conversation
+    memory_prompt_template = """<s>[INST] <<SYS>> The following is a friendly conversation
 between a human and an assistant. The assistant is professional and provides lots of specific
 details from its context.If the assistant does not know the answer to a question, it truthfully
 says it does not know.
+* important to only use current context for answering the question
+<</SYS>>
 CURRENT CONTEXT:
 {history}
-<</SYS>>
-human: {input}
-[/INST]
+[/INST]</s>
+<s>[INST] {input} [/INST]
 """
 
 
@@ -141,7 +142,10 @@ class Llama2DataSource(ChatBotDataSource):
         Returns:
             str: history formatted
         """
-        combined = ["human: " + q + "\nassistant: " + a for q, a in history]
+        combined = [
+            "<s>[INST]" + "human: " + q + "[/INST]" + "\nassistant: " + a + "</s>"
+            for q, a in history
+        ]
         return "\n".join(combined)
 
     def chat(self, cbpms=List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:

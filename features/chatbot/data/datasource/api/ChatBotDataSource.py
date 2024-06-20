@@ -1,8 +1,10 @@
-
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from features.chatbot.data.models.ChatBotModel import ChatBotPayloadModel, ChatBotReadModel
+from features.chatbot.data.models.ChatBotModel import (
+    ChatBotPayloadModel,
+    ChatBotReadModel,
+)
 
 
 class ChatBotDataSource(ABC):
@@ -15,7 +17,7 @@ class ChatBotDataSource(ABC):
         pass
 
     @abstractmethod
-    def chat(question:List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:
+    def chat(question: List[ChatBotPayloadModel]) -> List[ChatBotReadModel]:
         pass
 
     @abstractmethod
